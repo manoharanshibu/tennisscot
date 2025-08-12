@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Trophy } from 'lucide-react-native';
 
-export default function TournamentsScreen() {
+export default function SettingsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
@@ -11,8 +11,8 @@ export default function TournamentsScreen() {
         style={styles.header}
       >
         <Trophy size={32} color="#ffffff" style={styles.headerIcon} />
-        <Text style={styles.headerTitle}>Tournaments</Text>
-        <Text style={styles.headerSubtitle}>Upcoming competitions</Text>
+        <Text style={styles.headerTitle}>Settings</Text>
+        <Text style={styles.headerSubtitle}>Settings Page</Text>
       </LinearGradient>
 
       <View style={styles.content}>

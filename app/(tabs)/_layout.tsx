@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router';
 import { Users, Trophy, Calendar, User } from 'lucide-react-native';
+import { Image } from 'react-native';
 
 export default function TabLayout() {
   return (
@@ -9,7 +10,7 @@ export default function TabLayout() {
         tabBarActiveTintColor: '#059669',
         tabBarInactiveTintColor: '#6b7280',
         tabBarStyle: {
-          backgroundColor: '#ffffff',
+          backgroundColor: '#0061a8',
           borderTopWidth: 1,
           borderTopColor: '#e5e7eb',
           paddingBottom: 8,
@@ -25,36 +26,60 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Players',
+          title: '',
           tabBarIcon: ({ size, color }) => (
-            <Users size={size} color={color} />
+            <Image
+              source={require('../../assets/images/Home.png')}
+              resizeMode="contain"
+            />
           ),
         }}
       />
       <Tabs.Screen
-        name="tournaments"
+        name="performance"
         options={{
-          title: 'Tournaments',
+          title: '',
           tabBarIcon: ({ size, color }) => (
-            <Trophy size={size} color={color} />
+            <Image
+              source={require('../../assets/images/Performance.png')}
+              resizeMode="contain"
+            />
           ),
         }}
       />
       <Tabs.Screen
-        name="schedule"
+        name="scores"
         options={{
-          title: 'Schedule',
+          title: '',
           tabBarIcon: ({ size, color }) => (
-            <Calendar size={size} color={color} />
+            <Image
+              source={require('../../assets/images/Scores.png')}
+              resizeMode="contain"
+            />
           ),
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="notifications"
         options={{
-          title: 'Profile',
+          title: '',
           tabBarIcon: ({ size, color }) => (
-            <User size={size} color={color} />
+            <Image
+              source={require('../../assets/images/Notifications.png')}
+              resizeMode="contain"
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: '',
+          tabBarIcon: ({ size, color }) => (
+            <Image
+              source={require('../../assets/images/Settings.png')}
+              resizeMode="contain"
+            />
           ),
         }}
       />

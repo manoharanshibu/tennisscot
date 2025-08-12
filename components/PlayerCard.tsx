@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { MapPin, Phone, Mail, TrendingUp } from 'lucide-react-native';
 import { Player } from '@/types/Player';
 
 interface PlayerCardProps {
@@ -23,46 +22,10 @@ export default function PlayerCard({ player, onPress }: PlayerCardProps) {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.95}>
       <View style={styles.cardHeader}>
-        <Image source={{ uri: player.profileImage }} style={styles.profileImage} />
         <View style={styles.playerInfo}>
           <View style={styles.nameRankContainer}>
             <Text style={styles.playerName}>{player.name}</Text>
-            <View style={styles.rankingBadge}>
-              <Text style={styles.rankingText}>#{player.ranking}</Text>
-            </View>
           </View>
-          <View style={styles.locationContainer}>
-            <MapPin size={14} color="#6b7280" />
-            <Text style={styles.locationText}>{player.location}</Text>
-          </View>
-          <View style={[styles.membershipBadge, { backgroundColor: getMembershipColor(player.membershipType) }]}>
-            <Text style={styles.membershipText}>{player.membershipType}</Text>
-          </View>
-        </View>
-      </View>
-      
-      <View style={styles.statsContainer}>
-        <View style={styles.statItem}>
-          <Text style={styles.statValue}>{player.matchesPlayed}</Text>
-          <Text style={styles.statLabel}>Matches</Text>
-        </View>
-        <View style={styles.statItem}>
-          <View style={styles.winRateContainer}>
-            <TrendingUp size={16} color="#059669" />
-            <Text style={styles.statValue}>{player.winRate}%</Text>
-          </View>
-          <Text style={styles.statLabel}>Win Rate</Text>
-        </View>
-      </View>
-
-      <View style={styles.contactContainer}>
-        <View style={styles.contactItem}>
-          <Phone size={14} color="#6b7280" />
-          <Text style={styles.contactText}>{player.phone}</Text>
-        </View>
-        <View style={styles.contactItem}>
-          <Mail size={14} color="#6b7280" />
-          <Text style={styles.contactText}>{player.email}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -71,7 +34,9 @@ export default function PlayerCard({ player, onPress }: PlayerCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#ffffff',
+    display: 'flex',
+    justifyContent: 'center',
+    backgroundColor: '#B30088',
     borderRadius: 16,
     padding: 20,
     marginHorizontal: 16,
@@ -86,11 +51,15 @@ const styles = StyleSheet.create({
     elevation: 4,
     borderWidth: 1,
     borderColor: '#f3f4f6',
+    width: 247,
+    height: 54,
   },
   cardHeader: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 16,
+    marginTop: 16,
+    alignContent: 'center',
+    width: 247,
+    height: 54,
   },
   profileImage: {
     width: 60,
@@ -110,7 +79,7 @@ const styles = StyleSheet.create({
   playerName: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#111827',
+    color: '#FEFEFE',
     flex: 1,
   },
   rankingBadge: {

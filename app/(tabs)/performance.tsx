@@ -1,26 +1,26 @@
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { User } from 'lucide-react-native';
+import { Trophy } from 'lucide-react-native';
 
-export default function ProfileScreen() {
+export default function PerformanceScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
-        colors={['#dc2626', '#b91c1c']}
+        colors={['#1e40af', '#1e3a8a']}
         style={styles.header}
       >
-        <User size={32} color="#ffffff" style={styles.headerIcon} />
-        <Text style={styles.headerTitle}>Profile</Text>
-        <Text style={styles.headerSubtitle}>Your tennis profile</Text>
+        <Trophy size={32} color="#ffffff" style={styles.headerIcon} />
+        <Text style={styles.headerTitle}>Performance</Text>
+        <Text style={styles.headerSubtitle}>Upcoming competitions</Text>
       </LinearGradient>
 
       <View style={styles.content}>
         <View style={styles.comingSoonContainer}>
-          <User size={48} color="#d1d5db" />
+          <Trophy size={48} color="#d1d5db" />
           <Text style={styles.comingSoonTitle}>Coming Soon</Text>
           <Text style={styles.comingSoonText}>
-            Personal profile management and statistics will be available here soon.
+            Tournament listings and registration will be available here soon.
           </Text>
         </View>
       </View>
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   },
   headerSubtitle: {
     fontSize: 16,
-    color: '#fecaca',
+    color: '#dbeafe',
     textAlign: 'center',
     fontWeight: '500',
   },

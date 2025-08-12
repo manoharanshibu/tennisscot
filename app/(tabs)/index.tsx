@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, FlatList, StyleSheet, SafeAreaView } from 'react-native';
+import { Image, View, Text, FlatList, StyleSheet, SafeAreaView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import PlayerCard from '@/components/PlayerCard';
 import SearchBar from '@/components/SearchBar';
@@ -11,7 +11,7 @@ export default function PlayersScreen() {
 
   const filteredPlayers = useMemo(() => {
     if (!searchQuery.trim()) return players;
-    
+
     return players.filter(player =>
       player.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       player.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -29,15 +29,26 @@ export default function PlayersScreen() {
     />
   );
 
+  const currentDate = new Date();
+
+  const formattedDate = currentDate.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient
-        colors={['#059669', '#047857']}
+      <View
         style={styles.header}
       >
-        <Text style={styles.headerTitle}>Tennis Scotland</Text>
-        <Text style={styles.headerSubtitle}>Player Directory</Text>
-      </LinearGradient>
+        <Image
+          source={require('../../assets/images/tennis-scotland-logo.png')}
+          style={{ width: 108, height: 45 }} // Set size as needed
+          resizeMode="contain"
+        />
+        <Text style={styles.headerTitle}>{formattedDate}</Text>
+      </View>
 
       <View style={styles.content}>
         <SearchBar
@@ -67,14 +78,15 @@ export default function PlayersScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    backgroundColor: '#0061a8',
   },
   header: {
     paddingTop: 20,
     paddingBottom: 30,
     paddingHorizontal: 20,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    backgroundColor: '#0061a8',
   },
   headerTitle: {
     fontSize: 28,
