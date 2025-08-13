@@ -7,12 +7,12 @@ export default function ScheduleScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
-        colors={['#7c3aed', '#6d28d9']}
+        colors={['#0061a8', '#0676c7ff']}
         style={styles.header}
       >
         <Calendar size={32} color="#ffffff" style={styles.headerIcon} />
-        <Text style={styles.headerTitle}>Schedule</Text>
-        <Text style={styles.headerSubtitle}>Court bookings & matches</Text>
+        <Text style={styles.headerTitle}>Scores</Text>
+        <Text style={styles.headerSubtitle}>Player evaluation scores</Text>
       </LinearGradient>
 
       <View style={styles.content}>

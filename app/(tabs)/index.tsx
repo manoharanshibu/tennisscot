@@ -5,9 +5,31 @@ import PlayerCard from '@/components/PlayerCard';
 import SearchBar from '@/components/SearchBar';
 import { players } from '@/data/players';
 import { Player } from '@/types/Player';
+import PlayerEvaluationModal from '@/components/PlayerEvaluationModel';
 
 export default function PlayersScreen() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleSaveEvaluation = (playerId: string, tennisHeadScore: number, fitnessHeadScore: number) => {
+    // Here you would typically save the evaluation to your backend or local storage
+    console.log('Saving evaluation for player:', playerId, {
+      tennisHeadScore,
+      fitnessHeadScore,
+    });
+    // You could also update the player data with the new scores
+  };
+
+  const handlePlayerPress = (player: Player) => {
+    setSelectedPlayer(player);
+    setModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    setSelectedPlayer(null);
+  };
 
   const filteredPlayers = useMemo(() => {
     if (!searchQuery.trim()) return players;
@@ -20,12 +42,9 @@ export default function PlayersScreen() {
   }, [searchQuery]);
 
   const renderPlayer = ({ item }: { item: Player }) => (
-    <PlayerCard 
-      player={item} 
-      onPress={() => {
-        // Handle player selection - could navigate to player details
-        console.log('Selected player:', item.name);
-      }}
+    <PlayerCard
+      player={item}
+      onPress={() => handlePlayerPress(item)}
     />
   );
 
@@ -42,20 +61,40 @@ export default function PlayersScreen() {
       <View
         style={styles.header}
       >
-        <Image
-          source={require('../../assets/images/tennis-scotland-logo.png')}
-          style={{ width: 108, height: 45 }} // Set size as needed
-          resizeMode="contain"
-        />
+
+
+        <View style={styles.searchContainer}>
+          <Image
+            source={require('../../assets/images/tennis-scotland-logo.png')}
+            style={{ width: 108, height: 45 }} // Set size as needed
+            resizeMode="contain"
+          />
+
+          {/*  <SearchBar
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Search by name, location, or membership..."
+          /> */}
+          <View style={styles.iconContainer}>
+            <Image
+              source={require('../../assets/images/search icon.png')}
+              style={{ width: 27, height: 27 }} // Set size as needed
+              resizeMode="contain"
+            />
+            <Image
+              source={require('../../assets/images/menu.png')}
+              style={{ width: 33, height: 33 }} // Set size as needed
+              resizeMode="contain"
+            />
+          </View>
+
+        </View>
         <Text style={styles.headerTitle}>{formattedDate}</Text>
+
       </View>
 
       <View style={styles.content}>
-        <SearchBar
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          placeholder="Search by name, location, or membership..."
-        />
+
 
         <View style={styles.resultsHeader}>
           <Text style={styles.resultsText}>
@@ -71,6 +110,12 @@ export default function PlayersScreen() {
           contentContainerStyle={styles.listContainer}
         />
       </View>
+      <PlayerEvaluationModal
+        visible={modalVisible}
+        player={selectedPlayer}
+        onClose={handleCloseModal}
+        onSave={handleSaveEvaluation}
+      />
     </SafeAreaView>
   );
 }
@@ -79,6 +124,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0061a8',
+    alignItems: 'center',
+
   },
   header: {
     paddingTop: 20,
@@ -88,12 +135,24 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 0,
     backgroundColor: '#0061a8',
   },
+  iconContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 10,
+  },
+  searchContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    minWidth: 250,
+    justifyContent: 'space-between',
+  },
   headerTitle: {
-    fontSize: 28,
-    fontWeight: '800',
+    fontFamily: 'Segoe UI',
+    fontSize: 18,
+    fontWeight: '600',
     color: '#ffffff',
     textAlign: 'center',
-    marginBottom: 4,
+    marginTop: 16,
   },
   headerSubtitle: {
     fontSize: 16,
@@ -107,7 +166,6 @@ const styles = StyleSheet.create({
   },
   resultsHeader: {
     paddingHorizontal: 16,
-    marginBottom: 8,
   },
   resultsText: {
     fontSize: 14,

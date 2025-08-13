@@ -12,20 +12,21 @@ export default function SearchBar({ value, onChangeText, placeholder = 'Search p
   return (
     <View style={styles.container}>
       <Search size={20} color="#6b7280" style={styles.searchIcon} />
-      <TextInput
+      {/* <TextInput
         style={styles.input}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
         placeholderTextColor="#9ca3af"
       />
-    </View>
+ */}    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    backgroundColor: 'red',
+    flexDirection: 'column',
     alignItems: 'center',
     backgroundColor: '#f9fafb',
     borderRadius: 12,
@@ -35,6 +36,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderWidth: 1,
     borderColor: '#e5e7eb',
+    maxWidth: 50,
   },
   searchIcon: {
     marginRight: 12,
