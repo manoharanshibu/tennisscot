@@ -17,7 +17,7 @@ interface PlayerEvaluationModalProps {
   visible: boolean;
   player: Player | null;
   onClose: () => void;
-  onSave: (playerId: string, tennisHeadScore: number, fitnessHeadScore: number) => void;
+  onSave: (player: Player) => void;
 }
 
 export default function PlayerEvaluationModal({
@@ -36,7 +36,7 @@ export default function PlayerEvaluationModal({
 
   const handleSave = () => {
     if (player) {
-      onSave(player.id, tennisHeadScore, fitnessHeadScore);
+      onSave({ tennisHeadScore, tennisHeartScore, tennisAthletScore, fitnessHeadScore, fitnessHeartScore, fitnessAthletScore });
       onClose();
     }
   };

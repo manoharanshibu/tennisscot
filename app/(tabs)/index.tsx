@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+
 import { Image, View, Text, FlatList, StyleSheet, SafeAreaView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import PlayerCard from '@/components/PlayerCard';
@@ -6,13 +7,31 @@ import SearchBar from '@/components/SearchBar';
 import { players } from '@/data/players';
 import { Player } from '@/types/Player';
 import PlayerEvaluationModal from '@/components/PlayerEvaluationModel';
+import { EvaluationData, submitPlayerEvaluation } from '../services/api';
 
 export default function PlayersScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleSaveEvaluation = (playerId: string, tennisHeadScore: number, fitnessHeadScore: number) => {
+  const handleSaveEvaluation = async (player: Player) => {
+
+    const evaluationData: EvaluationData = {
+      'Player-ID': `P${player.id}`,
+      'Session-Id': `S${Date.now()}`, // Generate unique session ID
+      'Centre_ID': 'SC_3838',
+      'Coach_ID': 'C3838',
+      'Comments': 'comments', // || 'No additional comments provided',
+      'Ft_Athl': player.fitnessAthletScore,
+      'Ft_Head': player.fitnessHeadScore,
+      'Ft_Heart': player.fitnessHeartScore,
+      'Tn_Athl': player.tennisAtheletScore,
+      'Tn_head': player.tennisHeadScore,
+      'Tn_Heart': player.tennisHeartScore,
+    };
+
+    const success = await submitPlayerEvaluation(evaluationData);
+
     // Here you would typically save the evaluation to your backend or local storage
     console.log('Saving evaluation for player:', playerId, {
       tennisHeadScore,

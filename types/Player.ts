@@ -10,4 +10,10 @@ export interface Player {
   joinDate: string;
   matchesPlayed: number;
   winRate: number;
+  tennisHeadScore: number;
+  tennisHeartScore: number;
+  tennisAtheletScore: number;
+  fitnessHeartScore: number;
+  fitnessHeadScore: number;
+  fitnessAthletScore: number;
 }
