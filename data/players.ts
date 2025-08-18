@@ -38,7 +38,8 @@ export const players: Player[] = [
     profileImage: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=400',
     joinDate: '2021-07-10',
     matchesPlayed: 89,
-    winRate: 72.1
+    winRate: 72.1,
+    evaluated: true,
   },
   {
     id: '4',
@@ -64,7 +65,8 @@ export const players: Player[] = [
     profileImage: 'https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg?auto=compress&cs=tinysrgb&w=400',
     joinDate: '2022-01-18',
     matchesPlayed: 67,
-    winRate: 69.4
+    winRate: 69.4,
+    evaluated: true,
   },
   {
     id: '6',

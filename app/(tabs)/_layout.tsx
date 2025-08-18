@@ -1,5 +1,4 @@
 import { Tabs } from 'expo-router';
-import { Users, Trophy, Calendar, User } from 'lucide-react-native';
 import { Image } from 'react-native';
 
 export default function TabLayout() {

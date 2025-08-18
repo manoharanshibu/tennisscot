@@ -8,16 +8,22 @@ interface ScoreSelectorProps {
   color: string;
   min?: number;
   max?: number;
+  step?: number;
 }
 
 export default function ScoreSelector({
   value,
   onChange,
   color,
-  min = 1,
-  max = 10
+  min = 0.5,
+  max = 10,
+  step = 0.5,
 }: ScoreSelectorProps) {
-  const scores = Array.from({ length: max - min + 0.5 }, (_, i) => min + i);
+
+  const scores = Array.from(
+    { length: (max - min) / step + 1 },
+    (_, i) => min + i * step
+  );
 
   const getScoreLabel = (score: number) => {
     if (score <= 3) return 'Poor';
@@ -64,21 +70,21 @@ const styles = StyleSheet.create({
 
     borderWidth: 1,
     borderRadius: 12,
-    width: 80,
+    width: 100,
     backgroundColor: '#ffffff',
     overflow: 'hidden',
 
   },
   picker: {
     height: 40,
-    width: 80,
+    width: 100,
 
   },
   pickerItem: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: '800',
     color: '#000000',
-    marginTop: -40,
+    marginTop: -45,
   },
   selectedScoreContainer: {
     flexDirection: 'row',
@@ -95,7 +101,7 @@ const styles = StyleSheet.create({
   selectedScore: {
     fontSize: 34,
     fontWeight: '800',
-    
+
   },
   scaleLabels: {
     flexDirection: 'row',

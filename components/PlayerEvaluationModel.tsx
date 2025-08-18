@@ -43,8 +43,8 @@ export default function PlayerEvaluationModal({
 
   const handleClose = () => {
     // Reset scores when closing
-    setTennisHeadScore(5);
-    setFitnessHeadScore(5);
+    // setTennisHeadScore(5);
+    // setFitnessHeadScore(5);
     onClose();
   };
 

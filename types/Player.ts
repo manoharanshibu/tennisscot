@@ -16,4 +16,5 @@ export interface Player {
   fitnessHeartScore: number;
   fitnessHeadScore: number;
   fitnessAthletScore: number;
+  evaluated: boolean,
 }

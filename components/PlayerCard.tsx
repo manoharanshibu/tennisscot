@@ -20,7 +20,12 @@ export default function PlayerCard({ player, onPress }: PlayerCardProps) {
   };
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.95}>
+    <TouchableOpacity style={[
+      styles.card,
+      {
+        backgroundColor: player.evaluated === true ? '#023293' : '#B30088',
+      },
+    ]} onPress={onPress} activeOpacity={0.95}>
       <View style={styles.cardHeader}>
         <View style={styles.playerInfo}>
           <View style={styles.nameRankContainer}>
@@ -36,7 +41,6 @@ const styles = StyleSheet.create({
   card: {
     display: 'flex',
     justifyContent: 'center',
-    backgroundColor: '#B30088',
     boxShadow: '1px 1px 6.5px 1px #00000021',
     borderRadius: 9,
     padding: 20,
