@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   },
   selectedScoreLabel: {
     fontSize: 24,
-    color: '#6b7280',
+    color: '#000000',
 
   },
   selectedScore: {
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   },
   scaleLabel: {
     fontSize: 12,
-    color: '#9ca3af',
+    color: '#000000',
     fontWeight: '500',
   },
 });

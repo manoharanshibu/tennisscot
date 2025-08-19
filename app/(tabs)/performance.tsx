@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
-
-import { Image, View, Text, FlatList, StyleSheet, SafeAreaView } from 'react-native';
+import { Image, View, Text, FlatList, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import PlayerCard from '@/components/PlayerCard';
 import { players } from '@/data/players';
 import { Player } from '@/types/Player';
@@ -11,9 +10,9 @@ export default function PerformanceScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [showAllPlayers, setShowAllPlayers] = useState(false);
 
   const handleSaveEvaluation = async (player: Player) => {
-
     const evaluationData: EvaluationData = {
       'Player-ID': `P${player.id}`,
       'Session-Id': `S${Date.now()}`, // Generate unique session ID
@@ -29,13 +28,7 @@ export default function PerformanceScreen() {
     };
 
     const success = await submitPlayerEvaluation(evaluationData);
-
-    // Here you would typically save the evaluation to your backend or local storage
-    console.log('Saving evaluation for player:', player.id,
-      player.tennisHeadScore,
-      player.fitnessHeadScore,
-    );
-    // You could also update the player data with the new scores
+    console.log('Saving evaluation for player:', player.id);
   };
 
   const handlePlayerPress = (player: Player) => {
@@ -58,6 +51,17 @@ export default function PerformanceScreen() {
     );
   }, [searchQuery]);
 
+  const displayedPlayers = useMemo(() => {
+    const playersToShow = searchQuery.trim() ? filteredPlayers : players;
+    // Show either the first 4 or all based on 'showAllPlayers' flag
+    return showAllPlayers ? playersToShow : playersToShow.slice(0, 4);
+  }, [filteredPlayers, showAllPlayers, searchQuery]);
+
+  const hasMorePlayers = useMemo(() => {
+    const totalPlayers = searchQuery.trim() ? filteredPlayers.length : players.length;
+    return totalPlayers > 4;
+  }, [filteredPlayers.length, showAllPlayers, searchQuery]);
+
   const renderPlayer = ({ item }: { item: Player }) => (
     <PlayerCard
       player={item}
@@ -66,7 +70,6 @@ export default function PerformanceScreen() {
   );
 
   const currentDate = new Date();
-
   const formattedDate = currentDate.toLocaleDateString('en-GB', {
     day: '2-digit',
     month: 'short',
@@ -75,58 +78,66 @@ export default function PerformanceScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View
-        style={styles.header}
-      >
-
-
+      <View style={styles.header}>
         <View style={styles.searchContainer}>
           <Image
             source={require('../../assets/images/tennis-scotland-logo.png')}
-            style={{ width: 108, height: 45 }} // Set size as needed
+            style={{ width: 108, height: 45 }}
             resizeMode="contain"
           />
-
-          {/*  <SearchBar
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholder="Search by name, location, or membership..."
-          /> */}
           <View style={styles.iconContainer}>
             <Image
               source={require('../../assets/images/search icon.png')}
-              style={{ width: 27, height: 27 }} // Set size as needed
+              style={{ width: 27, height: 27 }}
               resizeMode="contain"
             />
             <Image
               source={require('../../assets/images/menu.png')}
-              style={{ width: 33, height: 33 }} // Set size as needed
+              style={{ width: 33, height: 33 }}
               resizeMode="contain"
             />
           </View>
-
         </View>
         <Text style={styles.headerTitle}>{formattedDate}</Text>
-
       </View>
 
       <View style={styles.content}>
-
-
         <View style={styles.resultsHeader}>
           <Text style={styles.resultsText}>
-            {filteredPlayers.length} {filteredPlayers.length === 1 ? 'player' : 'players'} found
+            {displayedPlayers.length} {displayedPlayers.length === 1 ? 'player' : 'players'} {showAllPlayers || searchQuery.trim() ? 'found' : 'shown'}
           </Text>
         </View>
 
         <FlatList
-          data={filteredPlayers}
+          data={displayedPlayers}
           renderItem={renderPlayer}
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.listContainer}
         />
+
+        {hasMorePlayers && (
+          <TouchableOpacity
+            style={styles.moreButton}
+            onPress={() => setShowAllPlayers(!showAllPlayers)}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.moreText}>{showAllPlayers ? 'Show Less' : 'More Players'}</Text>
+
+            <Image
+              source={require('../../assets/images/more.png')}
+              style={[
+                styles.moreIcon,
+                {
+                  transform: [{ rotate: showAllPlayers ? '180deg' : '0deg' }], // Correct rotation
+                },
+              ]}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        )}
       </View>
+
       <PlayerEvaluationModal
         visible={modalVisible}
         player={selectedPlayer}
@@ -142,7 +153,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0061a8',
     alignItems: 'center',
-
   },
   header: {
     paddingTop: 20,
@@ -171,12 +181,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 16,
   },
-  headerSubtitle: {
-    fontSize: 16,
-    color: '#d1fae5',
-    textAlign: 'center',
-    fontWeight: '500',
-  },
   content: {
     flex: 1,
     paddingTop: 20,
@@ -189,7 +193,27 @@ const styles = StyleSheet.create({
     color: '#6b7280',
     fontWeight: '500',
   },
+  moreButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    borderRadius: 12,
+    paddingVertical: 12,
+    gap: 10,
+    marginTop: -10,
+    marginLeft: 150,
+  },
+  moreIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 8,
+    tintColor: '#ffffff',
+  },
+  moreText: {
+    fontSize: 14,
+    color: '#ffffff',
+    fontWeight: '600',
+  },
   listContainer: {
-    paddingBottom: 100,
   },
 });

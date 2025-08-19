@@ -110,10 +110,12 @@ export default function PlayerEvaluationModal({
                 <Text style={styles.scoreLabel}>Head</Text>
               </View>
               <ScoreSelector
+                color='#000000'
                 value={tennisHeadScore}
                 onChange={setTennisHeadScore}
               />
               <ScoreSelector
+                color='#000000'
                 value={fitnessHeadScore}
                 onChange={setFitnessHeadScore}
               />
@@ -127,12 +129,12 @@ export default function PlayerEvaluationModal({
               <ScoreSelector
                 value={tennisHeartScore}
                 onChange={setTennisHeartScore}
-                color="#dc2626"
+                color='#000000'
               />
               <ScoreSelector
                 value={fitnessHeartScore}
                 onChange={setFitnessHeartScore}
-                color="#dc2626"
+                color='#000000'
               />
             </View>
 
