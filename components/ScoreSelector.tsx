@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '800',
     color: '#000000',
-    marginTop: -45,
+    marginTop: -88,
   },
   selectedScoreContainer: {
     flexDirection: 'row',

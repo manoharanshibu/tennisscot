@@ -50,7 +50,7 @@ export default function PerformanceScreen() {
     };
 
     const success = await submitPlayerEvaluation(evaluationData);
-    console.log('Saving evaluation for player:', player.id);
+    console.log('Saving evaluation for player:', evaluationData);
   };
 
   const handlePlayerPress = (player: Player) => {
