@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { LogIn, UserPlus, Lock, User } from 'lucide-react-native';
 import { router } from 'expo-router';
-import { ROLE_TYPES } from './constants';
+import { ROLE_TYPES } from '../app/(tabs)/constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen() {
