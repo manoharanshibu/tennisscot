@@ -5,7 +5,6 @@ import { Picker } from '@react-native-picker/picker';
 interface ScoreSelectorProps {
   value: number;
   onChange: (value: number) => void;
-  color: string;
   min?: number;
   max?: number;
   step?: number;
@@ -14,7 +13,6 @@ interface ScoreSelectorProps {
 export default function ScoreSelector({
   value,
   onChange,
-  color,
   min = 0.5,
   max = 10,
   step = 0.5,
@@ -35,7 +33,7 @@ export default function ScoreSelector({
 
   return (
     <View style={styles.container}>
-      <View style={[styles.pickerContainer, { borderColor: color }]}>
+      <View style={[styles.pickerContainer]}>
         <Picker
           selectedValue={value}
           onValueChange={(itemValue) => onChange(itemValue)}
@@ -70,14 +68,14 @@ const styles = StyleSheet.create({
 
     borderWidth: 1,
     borderRadius: 12,
-    width: 100,
+    width: 95,
     backgroundColor: '#ffffff',
     overflow: 'hidden',
 
   },
   picker: {
     height: 40,
-    width: 100,
+    width: 95,
 
   },
   pickerItem: {

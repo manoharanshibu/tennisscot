@@ -8,22 +8,39 @@ import {
   StyleSheet,
   SafeAreaView,
   Alert,
-  ImageBackground
+  ScrollView,
+  Dimensions,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { LogIn, UserPlus, Lock, User } from 'lucide-react-native';
 import { router } from 'expo-router';
+import { ROLE_TYPES } from './constants';
 
 export default function PlayersScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
+const userNames = [{ name: 'Raffel', role: ROLE_TYPES.FITNESS }, { name: 'Roger', role: ROLE_TYPES.FITNESS }, { name: 'Andre', role: ROLE_TYPES.FITNESS }]
+
+const NOT_FOUND = 'Role not found';
+  // Function to get role by name
+const getRoleByName = (name: string) => {
+  const user = userNames.find((u) => u.name === name);
+  return user?.role ?? NOT_FOUND;
+};
+
+// Example usage
+const role = getRoleByName('Roger');
+  
   const handleLogin = () => {
     if (!username.trim() || !password.trim()) {
       Alert.alert('Error', 'Please enter both username and password');
       return;
     }
 
+    if (getRoleByName(username) === NOT_FOUND) {
+      Alert.alert('Error', 'Please enter a valid username and password');
+      return;
+    }
     router.push('/performance');
   };
 
@@ -32,46 +49,31 @@ export default function PlayersScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.searchContainer}>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+
+        {/* Top Banner Background Image */}
+        <View style={styles.bannerContainer}>
+          <Image
+            source={require('../../assets/images/bg.png')}
+            style={styles.bannerImage}
+            resizeMode="cover"
+          />
           <Image
             source={require('../../assets/images/tennis-scotland-logo.png')}
-            style={{ width: 108, height: 45 }}
+            style={styles.logo}
             resizeMode="contain"
           />
-          <View style={styles.iconContainer}>
-            <Image
-              source={require('../../assets/images/search icon.png')}
-              style={{ width: 27, height: 27, marginRight: 10 }}
-              resizeMode="contain"
-            />
-            <Image
-              source={require('../../assets/images/menu.png')}
-              style={{ width: 33, height: 33 }}
-              resizeMode="contain"
-            />
-          </View>
         </View>
-      </View>
-
-      <LinearGradient colors={['#0061a8', '#0061a8']} style={styles.background}>
-
-        <View style={styles.content}>
-          <View style={styles.logoContainer}>
-            <View style={styles.logoCircle}>
-              <User size={48} color="#ffffff" />
-            </View>
-
-            <ImageBackground
-              source={require('../../assets/images/bg.png')}
-              style={styles.backgroundImage}
-            ></ImageBackground>
-            <Text style={styles.title}>Tennis Scotland</Text>
-            <Text style={styles.subtitle}>Player Management System</Text>
-          </View>
-
+        <View style={styles.loginContainer}>
+          <Image
+            source={require('../../assets/images/tennis-player.png')}
+            style={styles.tennisPlayer}
+            resizeMode="cover"
+          />
+          {/* Login Form */}
           <View style={styles.formContainer}>
+            {/* Username */}
             <View style={styles.inputContainer}>
               <User size={20} color="#6b7280" style={styles.inputIcon} />
               <TextInput
@@ -85,6 +87,7 @@ export default function PlayersScreen() {
               />
             </View>
 
+            {/* Password */}
             <View style={styles.inputContainer}>
               <Lock size={20} color="#6b7280" style={styles.inputIcon} />
               <TextInput
@@ -99,6 +102,7 @@ export default function PlayersScreen() {
               />
             </View>
 
+            {/* Buttons */}
             <View style={styles.buttonRow}>
               <TouchableOpacity
                 style={styles.signupButton}
@@ -120,64 +124,64 @@ export default function PlayersScreen() {
             </View>
           </View>
         </View>
-      </LinearGradient>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
+const { width } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
+    backgroundColor: '#0061a8',
   },
-  background: {
-    flex: 1,
+  scrollContainer: {
+    paddingBottom: 32,
   },
-  backgroundImage: {
-    resizeMode: 'contain',
-    alignSelf: 'flex-start',
-    top: -200,
+  bannerContainer: {
+    position: 'relative',
+    width: '100%',
+    height: 240,
   },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 32,
-    paddingTop: 20,
+  loginContainer: {
+    position: 'relative',
+    width: '100%',
+    height: '100%',
   },
-  logoContainer: {
-    alignItems: 'center',
-    marginBottom: 48,
+  bannerImage: {
+    backgroundColor: '#0061a8',
+    width: '100%',
+    height: '100%',
+    maxWidth: 500,
+    maxHeight: 500,
   },
-  logoCircle: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 24,
+  logo: {
+    position: 'absolute',
+    top: 80,
+    left: 20,
+    width: 180,
+    height: 60,
+    zIndex: 10,
   },
-  title: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: '#ffffff',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#d1fae5',
-    textAlign: 'center',
-    fontWeight: '500',
+  tennisPlayer: {
+    display: 'flex',
+    flexGrow: 1,
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    zIndex: -10,
+    maxWidth: 600,
+    maxHeight: 600,
   },
   formContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 24,
     padding: 32,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 16,
+    marginHorizontal: 20,
+    marginTop: 40, // pulls form slightly over image bottom edge
     elevation: 8,
+    maxWidth: 600,
+    maxHeight: 600,
+
   },
   inputContainer: {
     flexDirection: 'row',
@@ -187,8 +191,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16,
     marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
   },
   inputIcon: {
     marginRight: 12,
@@ -208,17 +210,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 16,
     borderRadius: 12,
-    backgroundColor: '#ffffff',
-    borderWidth: 2,
-    borderColor: '#059669',
+    backgroundColor: '#16316F',
     marginRight: 8,
+    width: 111,
+    height: 50,
+
+    boxShadow: 'box-shadow: 1px 3px 7px 1px #00000094',
+
   },
   signupButtonText: {
-    fontSize: 16,
+    fontSize: 21,
     fontWeight: '600',
-    color: '#059669',
+    color: '#ffffff',
     marginLeft: 8,
   },
   loginButton: {
@@ -226,39 +230,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 16,
     borderRadius: 12,
-    backgroundColor: '#059669',
+    backgroundColor: '#16316F',
+    width: 111,
+    height: 50,
   },
   loginButtonText: {
-    fontSize: 16,
+    fontSize: 21,
     fontWeight: '600',
     color: '#ffffff',
     marginLeft: 8,
-  },
-  footer: {
-    alignItems: 'center',
-    marginTop: 32,
-  },
-  footerText: {
-    fontSize: 14,
-    color: '#d1fae5',
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  header: {
-    paddingTop: 20,
-    paddingBottom: 30,
-    paddingHorizontal: 20,
-    backgroundColor: '#0061a8',
-  },
-  iconContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
   },
 });

@@ -9,9 +9,10 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
-import { X, Star, TrendingUp } from 'lucide-react-native';
+import { X } from 'lucide-react-native';
 import { Player } from '@/types/Player';
 import ScoreSelector from './ScoreSelector';
+import { ROLE_TYPES } from '@/app/(tabs)/constants';
 
 interface PlayerEvaluationModalProps {
   visible: boolean;
@@ -33,33 +34,28 @@ export default function PlayerEvaluationModal({
   const [fitnessHeartScore, setFitnessHeartScore] = useState(5);
   const [fitnessAthletScore, setFitnessAthletScore] = useState(5);
 
+  const [roleType, setRoleType] = useState<RoleType>(ROLE_TYPES.TENNISFITNESS);
 
   const handleSave = () => {
     if (player) {
-      onSave({ tennisHeadScore, tennisHeartScore, tennisAthletScore, fitnessHeadScore, fitnessHeartScore, fitnessAthletScore });
+      onSave({
+        ...player,
+        tennisHeadScore,
+        tennisHeartScore,
+        tennisAthletScore,
+        fitnessHeadScore,
+        fitnessHeartScore,
+        fitnessAthletScore,
+      });
       onClose();
     }
   };
 
   const handleClose = () => {
-    // Reset scores when closing
-    // setTennisHeadScore(5);
-    // setFitnessHeadScore(5);
     onClose();
   };
 
   if (!player) return null;
-
-  const getMembershipColor = (type: string) => {
-    switch (type) {
-      case 'Premium':
-        return '#f59e0b';
-      case 'Junior':
-        return '#059669';
-      default:
-        return '#6b7280';
-    }
-  };
 
   return (
     <Modal
@@ -76,107 +72,77 @@ export default function PlayerEvaluationModal({
         </View>
 
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          {/* Player Info Section */}
           <View style={styles.playerSection}>
             <View style={styles.playerInfo}>
               <Image source={{ uri: player.profileImage }} style={styles.profileImage} />
-
               <View style={styles.nameRankContainer}>
-                {/* <View style={styles.rankingBadge}>
-                  <Text style={styles.rankingText}>#{player.ranking}</Text>
-                </View> */}
                 <Text style={styles.playerName}>{player.name}</Text>
-
                 <Text style={styles.locationText}>{player.location}</Text>
-
               </View>
-              {/* <View style={[styles.membershipBadge, { backgroundColor: getMembershipColor(player.membershipType) }]}>
-                <Text style={styles.membershipText}>{player.membershipType}</Text>
-              </View> */}
             </View>
           </View>
 
-          {/* Evaluation Section */}
           <View style={styles.evaluationSection}>
             <Text style={styles.sectionTitle}>10 Mar 2025</Text>
             <Text style={styles.sectionTitle}>Ladywell Community Tennis Courts</Text>
+
             <View style={styles.headingContainer}>
-              <Text style={styles.heading}>Tennis</Text>
-              <Text style={styles.heading} >Fitness</Text>
+
+              <Text style={styles.heading}></Text>
+
+              {(roleType === ROLE_TYPES.TENNIS || roleType === ROLE_TYPES.TENNISFITNESS) && <Text style={styles.heading}>Tennis</Text>}
+
+              {(roleType === ROLE_TYPES.FITNESS || roleType === ROLE_TYPES.TENNISFITNESS) && <Text style={styles.heading}>Fitness</Text>}
             </View>
-            {/* Head Score */}
+
             <View style={styles.scoreSection}>
               <View style={styles.scoreLabelContainer}>
                 <Text style={styles.scoreLabel}>Head</Text>
               </View>
-              <ScoreSelector
-                color='#000000'
-                value={tennisHeadScore}
-                onChange={setTennisHeadScore}
-              />
-              <ScoreSelector
-                color='#000000'
-                value={fitnessHeadScore}
-                onChange={setFitnessHeadScore}
-              />
+              {(roleType === ROLE_TYPES.TENNIS || roleType === ROLE_TYPES.TENNISFITNESS) && <ScoreSelector value={tennisHeadScore} onChange={setTennisHeadScore} />}
+
+              {(roleType === ROLE_TYPES.FITNESS || roleType === ROLE_TYPES.TENNISFITNESS) && <ScoreSelector value={fitnessHeadScore} onChange={setFitnessHeadScore} />}
+
             </View>
 
-            {/* Heart Score */}
             <View style={styles.scoreSection}>
               <View style={styles.scoreLabelContainer}>
                 <Text style={styles.scoreLabel}>Heart</Text>
               </View>
-              <ScoreSelector
-                value={tennisHeartScore}
-                onChange={setTennisHeartScore}
-                color='#000000'
-              />
-              <ScoreSelector
-                value={fitnessHeartScore}
-                onChange={setFitnessHeartScore}
-                color='#000000'
-              />
+              {(roleType === ROLE_TYPES.TENNIS || roleType === ROLE_TYPES.TENNISFITNESS) && <ScoreSelector value={tennisHeartScore} onChange={setTennisHeartScore} />}
+
+              {(roleType === ROLE_TYPES.FITNESS || roleType === ROLE_TYPES.TENNISFITNESS) && <ScoreSelector value={fitnessHeartScore} onChange={setFitnessHeartScore} />}
+
             </View>
 
-            {/* Athlet Score */}
             <View style={styles.scoreSection}>
               <View style={styles.scoreLabelContainer}>
                 <Text style={styles.scoreLabel}>Athlet</Text>
               </View>
-              <ScoreSelector
-                value={tennisAthletScore}
-                onChange={setTennisAthletScore}
-                color="#dc2626"
-              />
-              <ScoreSelector
-                value={fitnessAthletScore}
-                onChange={setFitnessAthletScore}
-                color="#dc2626"
-              />
+              {(roleType === ROLE_TYPES.TENNIS || roleType === ROLE_TYPES.TENNISFITNESS) && <ScoreSelector value={tennisAthletScore} onChange={setTennisAthletScore} />}
+
+              {(roleType === ROLE_TYPES.FITNESS || roleType === ROLE_TYPES.TENNISFITNESS) && <ScoreSelector value={fitnessAthletScore} onChange={setFitnessAthletScore} />}
             </View>
+
             <TextInput
               style={styles.textArea}
-              multiline={true}         // Make it a multi-line text area
-              numberOfLines={4}        // Set the initial number of visible lines
+              multiline
+              numberOfLines={4}
               placeholder="Your feedback here..."
             />
-            {/* Action Buttons */}
+
             <View style={styles.actionButtons}>
-              {/* <TouchableOpacity style={styles.cancelButton} onPress={handleClose}>
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity> */}
               <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
                 <Text style={styles.saveButtonText}>OK</Text>
               </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
-
-
       </View>
     </Modal>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -280,12 +246,12 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     gap: 10,
-    marginLeft: 80,
   },
   heading: {
     color: '#FD5DF1',
     fontSize: 21,
     fontWeight: '600',
+    width: 90,
   },
   sectionTitle: {
     fontSize: 12,
@@ -338,6 +304,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 8,
+    width: 85,
   },
   scoreLabel: {
     fontSize: 16,
