@@ -1,146 +1,205 @@
-import React, { useState } from 'react';
+// app/index.tsx
+import React, { useEffect, useState } from 'react';
 import {
-  Image,
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  Image,
+  TextInput,
   Alert,
   ScrollView,
   Dimensions,
 } from 'react-native';
-import { LogIn, UserPlus, Lock, User } from 'lucide-react-native';
-import { router } from 'expo-router';
-import { ROLE_TYPES } from './constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from 'expo-router';
+import { LogIn, UserPlus, Lock, User } from 'lucide-react-native';
+import { ROLE_TYPES } from './constants';
 
-export default function PlayersScreen() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+export default function Index() {
+  const [loggedIn, setLoggedIn] = useState(false);
 
-  const userNames = [{ name: 'Raffael', role: ROLE_TYPES.TENNIS }, { name: 'Roger', role: ROLE_TYPES.FITNESS }, { name: 'Andre', role: ROLE_TYPES.TENNISFITNESS }]
+  useEffect(() => {
+    const loadSession = async () => {
+      try {
+        const sessionData = await AsyncStorage.getItem('session');
+        if (sessionData) {
+          const session = JSON.parse(sessionData);
+          setLoggedIn(session.loggedIn);
+          console.log('Logged in user:', session.username);
+          console.log('Role:', session.role);
+        }
+      } catch (e) {
+        console.error('Failed to load session', e);
+      }
+    };
 
-  const NOT_FOUND = 'Role not found';
-  // Function to get role by name
-  const getRoleByName = (name: string) => {
-    const user = userNames.find((u) => u.name === name);
-    return user?.role ?? NOT_FOUND;
-  };
+    loadSession();
+  }, []);
 
-  // Example usage
-  const role = getRoleByName('Roger');
+  function LandingScreen() {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.title}>Welcome!</Text>
 
-  const handleLogin = async () => {
-    if (!username.trim() || !password.trim()) {
-      Alert.alert('Error', 'Please enter both username and password');
-      return;
-    }
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/evaluation')}>
+          <Text style={styles.buttonText}>Self Evaluation</Text>
+        </TouchableOpacity>
 
-    const role = getRoleByName(username);
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/performance')}>
+          <Text style={styles.buttonText}>Performance Report</Text>
+        </TouchableOpacity>
 
-    if (role === NOT_FOUND) {
-      Alert.alert('Error', 'Please enter a valid username and password');
-      return;
-    }
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/schedules')}>
+          <Text style={styles.buttonText}>Schedules</Text>
+        </TouchableOpacity>
 
-    try {
-      // Store session info in AsyncStorage
-      await AsyncStorage.setItem('session', JSON.stringify({ username, role }));
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/book')}>
+          <Text style={styles.buttonText}>Book a Court</Text>
+        </TouchableOpacity>
 
-      // Navigate to performance screen
-      router.push('/performance');
-    } catch (error) {
-      console.error('Error saving session', error);
-      Alert.alert('Error', 'Unable to save session data');
-    }
-  };
+        <TouchableOpacity
+          style={styles.button}
+          onPress={async () => {
+            try {
+              await AsyncStorage.removeItem('session');
+              setLoggedIn(false);
+            } catch (error) {
+              console.error('Logout failed:', error);
+            }
+          }}
+        >
+          <Text style={styles.buttonText}>Logout</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
 
-  const handleSignup = () => {
-    Alert.alert('Sign Up', 'Sign up functionality will be available soon!');
-  };
+  function LoginScreen() {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
 
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+    const userNames = [
+      { name: 'Raffael', role: ROLE_TYPES.TENNIS },
+      { name: 'Roger', role: ROLE_TYPES.FITNESS },
+      { name: 'Andre', role: ROLE_TYPES.TENNISFITNESS },
+    ];
 
-        {/* Top Banner Background Image */}
-        <View style={styles.bannerContainer}>
-          <Image
-            source={require('../../assets/images/bg.png')}
-            style={styles.bannerImage}
-            resizeMode="cover"
-          />
-          <Image
-            source={require('../../assets/images/tennis-scotland-logo.png')}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-        </View>
-        <View style={styles.loginContainer}>
-          <Image
-            source={require('../../assets/images/tennis-player.png')}
-            style={styles.tennisPlayer}
-            resizeMode="cover"
-          />
-          {/* Login Form */}
-          <View style={styles.formContainer}>
-            {/* Username */}
-            <View style={styles.inputContainer}>
-              <User size={20} color="#6b7280" style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                value={username}
-                onChangeText={setUsername}
-                placeholder="Username"
-                placeholderTextColor="#9ca3af"
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-            </View>
+    const NOT_FOUND = 'Role not found';
 
-            {/* Password */}
-            <View style={styles.inputContainer}>
-              <Lock size={20} color="#6b7280" style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                value={password}
-                onChangeText={setPassword}
-                placeholder="Password"
-                placeholderTextColor="#9ca3af"
-                secureTextEntry
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-            </View>
+    const getRoleByName = (name: string) => {
+      const user = userNames.find((u) => u.name === name);
+      return user?.role ?? NOT_FOUND;
+    };
 
-            {/* Buttons */}
-            <View style={styles.buttonRow}>
-              <TouchableOpacity
-                style={styles.signupButton}
-                onPress={handleSignup}
-                activeOpacity={0.8}
-              >
-                <UserPlus size={18} color="#059669" />
-                <Text style={styles.signupButtonText}>Sign Up</Text>
-              </TouchableOpacity>
+    const handleLogin = async () => {
+      if (!username.trim() || !password.trim()) {
+        Alert.alert('Error', 'Please enter both username and password');
+        return;
+      }
 
-              <TouchableOpacity
-                style={styles.loginButton}
-                onPress={handleLogin}
-                activeOpacity={0.8}
-              >
-                <LogIn size={18} color="#ffffff" />
-                <Text style={styles.loginButtonText}>Login</Text>
-              </TouchableOpacity>
+      const role = getRoleByName(username);
+      if (role === NOT_FOUND) {
+        Alert.alert('Error', 'Invalid username or password');
+        return;
+      }
+
+      try {
+        await AsyncStorage.setItem(
+          'session',
+          JSON.stringify({ username, role, loggedIn: true })
+        );
+        setLoggedIn(true);
+      } catch (error) {
+        console.error('Error saving session', error);
+        Alert.alert('Error', 'Unable to save session data');
+      }
+    };
+
+    const handleSignup = () => {
+      Alert.alert('Sign Up', 'Sign up functionality will be available soon!');
+    };
+
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.bannerContainer}>
+            <Image
+              source={require('../../assets/images/bg.png')}
+              style={styles.bannerImage}
+              resizeMode="cover"
+            />
+            <Image
+              source={require('../../assets/images/tennis-scotland-logo.png')}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+          </View>
+
+          <View style={styles.loginContainer}>
+            <Image
+              source={require('../../assets/images/tennis-player.png')}
+              style={styles.tennisPlayer}
+              resizeMode="cover"
+            />
+
+            <View style={styles.formContainer}>
+              <View style={styles.inputContainer}>
+                <User size={20} color="#6b7280" style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  value={username}
+                  onChangeText={setUsername}
+                  placeholder="Username"
+                  placeholderTextColor="#9ca3af"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Lock size={20} color="#6b7280" style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder="Password"
+                  placeholderTextColor="#9ca3af"
+                  secureTextEntry
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+              </View>
+
+              <View style={styles.buttonRow}>
+                <TouchableOpacity
+                  style={styles.signupButton}
+                  onPress={handleSignup}
+                  activeOpacity={0.8}
+                >
+                  <UserPlus size={18} color="#059669" />
+                  <Text style={styles.signupButtonText}>Sign Up</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={handleLogin}
+                  activeOpacity={0.8}
+                >
+                  <LogIn size={18} color="#ffffff" />
+                  <Text style={styles.loginButtonText}>Login</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </ScrollView>
-      <Text style={styles.version}>Version 1.0</Text>
-    </SafeAreaView>
-  );
+        </ScrollView>
+        <Text style={styles.version}>Version 2.1</Text>
+      </SafeAreaView>
+    );
+  }
+
+  return loggedIn ? <LandingScreen /> : <LoginScreen />;
 }
 
 const { width } = Dimensions.get('window');
@@ -191,11 +250,10 @@ const styles = StyleSheet.create({
   formContainer: {
     padding: 32,
     marginHorizontal: 20,
-    marginTop: 40, // pulls form slightly over image bottom edge
+    marginTop: 40,
     elevation: 8,
     maxWidth: 600,
     maxHeight: 600,
-
   },
   inputContainer: {
     flexDirection: 'row',
@@ -235,9 +293,6 @@ const styles = StyleSheet.create({
     marginRight: 8,
     width: 111,
     height: 50,
-
-    boxShadow: 'box-shadow: 1px 3px 7px 1px #00000094',
-
   },
   signupButtonText: {
     fontSize: 21,
@@ -260,5 +315,31 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#ffffff',
     marginLeft: 8,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#0061a8',
+    padding: 20,
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'center',
+    marginBottom: 40,
+  },
+  button: {
+    backgroundColor: '#ffffff',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    marginBottom: 16,
+  },
+  buttonText: {
+    fontSize: 18,
+    color: '#0061a8',
+    fontWeight: '600',
+    textAlign: 'center',
   },
 });

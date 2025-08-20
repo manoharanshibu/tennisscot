@@ -1,0 +1,1 @@
+npm i expo expo-blur expo-camera expo-cli expo-constants expo-font expo-haptics expo-linear-gradient expo-linking expo-router expo-splash-screen expo-status-bar expo-symbols expo-system-ui expo-web-browser --save-dev
