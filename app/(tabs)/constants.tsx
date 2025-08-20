@@ -4,4 +4,4 @@ export const ROLE_TYPES = {
   TENNISFITNESS: 'TENNISFITNESS',
 } as const;
 
-export type RoleType = 'FITNESS' | 'TENNIS' | 'TENNISFITNESS';
+export type RoleType = 'FITNESS' | 'TENNIS' | 'TENNISFITNESS' | undefined | null;

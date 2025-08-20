@@ -14,34 +14,47 @@ import {
 import { LogIn, UserPlus, Lock, User } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { ROLE_TYPES } from './constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function PlayersScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-const userNames = [{ name: 'Raffel', role: ROLE_TYPES.FITNESS }, { name: 'Roger', role: ROLE_TYPES.FITNESS }, { name: 'Andre', role: ROLE_TYPES.FITNESS }]
+  const userNames = [{ name: 'Raffael', role: ROLE_TYPES.TENNIS }, { name: 'Roger', role: ROLE_TYPES.FITNESS }, { name: 'Andre', role: ROLE_TYPES.TENNISFITNESS }]
 
-const NOT_FOUND = 'Role not found';
+  const NOT_FOUND = 'Role not found';
   // Function to get role by name
-const getRoleByName = (name: string) => {
-  const user = userNames.find((u) => u.name === name);
-  return user?.role ?? NOT_FOUND;
-};
+  const getRoleByName = (name: string) => {
+    const user = userNames.find((u) => u.name === name);
+    return user?.role ?? NOT_FOUND;
+  };
 
-// Example usage
-const role = getRoleByName('Roger');
-  
-  const handleLogin = () => {
+  // Example usage
+  const role = getRoleByName('Roger');
+
+  const handleLogin = async () => {
     if (!username.trim() || !password.trim()) {
       Alert.alert('Error', 'Please enter both username and password');
       return;
     }
 
-    if (getRoleByName(username) === NOT_FOUND) {
+    const role = getRoleByName(username);
+
+    if (role === NOT_FOUND) {
       Alert.alert('Error', 'Please enter a valid username and password');
       return;
     }
-    router.push('/performance');
+
+    try {
+      // Store session info in AsyncStorage
+      await AsyncStorage.setItem('session', JSON.stringify({ username, role }));
+
+      // Navigate to performance screen
+      router.push('/performance');
+    } catch (error) {
+      console.error('Error saving session', error);
+      Alert.alert('Error', 'Unable to save session data');
+    }
   };
 
   const handleSignup = () => {
@@ -125,6 +138,7 @@ const role = getRoleByName('Roger');
           </View>
         </View>
       </ScrollView>
+      <Text style={styles.version}>Version 1.0</Text>
     </SafeAreaView>
   );
 }
@@ -199,6 +213,12 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: '#111827',
+  },
+  version: {
+    zIndex: 10,
+    textAlign: 'right',
+    right: 10,
+    color: '#ffffff',
   },
   buttonRow: {
     flexDirection: 'row',

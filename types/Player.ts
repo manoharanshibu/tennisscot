@@ -12,7 +12,7 @@ export interface Player {
   winRate: number;
   tennisHeadScore: number;
   tennisHeartScore: number;
-  tennisAtheletScore: number;
+  tennisAthletScore: number;
   fitnessHeartScore: number;
   fitnessHeadScore: number;
   fitnessAthletScore: number;

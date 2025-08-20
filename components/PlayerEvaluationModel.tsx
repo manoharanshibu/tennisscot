@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -12,11 +12,14 @@ import {
 import { X } from 'lucide-react-native';
 import { Player } from '@/types/Player';
 import ScoreSelector from './ScoreSelector';
-import { ROLE_TYPES } from '@/app/(tabs)/constants';
+import { ROLE_TYPES, RoleType } from '@/app/(tabs)/constants';
+import { Session } from '@/types/Session';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface PlayerEvaluationModalProps {
   visible: boolean;
   player: Player | null;
+  session: Session | null | undefined;
   onClose: () => void;
   onSave: (player: Player) => void;
 }
@@ -24,6 +27,7 @@ interface PlayerEvaluationModalProps {
 export default function PlayerEvaluationModal({
   visible,
   player,
+  session,
   onClose,
   onSave,
 }: PlayerEvaluationModalProps) {
@@ -34,7 +38,26 @@ export default function PlayerEvaluationModal({
   const [fitnessHeartScore, setFitnessHeartScore] = useState(5);
   const [fitnessAthletScore, setFitnessAthletScore] = useState(5);
 
-  const [roleType, setRoleType] = useState<RoleType>(ROLE_TYPES.TENNISFITNESS);
+  const [roleType, setRoleType] = useState<RoleType>(session?.role);
+
+  useEffect(() => {
+    const loadSession = async () => {
+      try {
+        setRoleType(null);
+        const sessionData = await AsyncStorage.getItem('session');
+        if (sessionData) {
+          const session = JSON.parse(sessionData);
+          setRoleType(session.role);
+          console.log('Logged in user:', session.username);
+          console.log('Role:', session.role);
+        }
+      } catch (e) {
+        console.error('Failed to load session', e);
+      }
+    };
+
+    loadSession();
+  }, [visible, session]);
 
   const handleSave = () => {
     if (player) {

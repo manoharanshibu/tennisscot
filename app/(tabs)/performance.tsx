@@ -1,16 +1,38 @@
-import React, { useState, useMemo } from 'react';
-import { Image, View, Text, FlatList, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Image, View, Text, FlatList, StyleSheet, SafeAreaView, TouchableOpacity, Alert } from 'react-native';
 import PlayerCard from '@/components/PlayerCard';
 import { players } from '@/data/players';
 import { Player } from '@/types/Player';
 import PlayerEvaluationModal from '@/components/PlayerEvaluationModel';
 import { EvaluationData, submitPlayerEvaluation } from '../services/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function PerformanceScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [showAllPlayers, setShowAllPlayers] = useState(false);
+
+  const [session, setSession] = useState(null);
+
+  useEffect(() => {
+    const loadSession = async () => {
+      try {
+        setSession(null);
+        const sessionData = await AsyncStorage.getItem('session');
+        if (sessionData) {
+          const session = JSON.parse(sessionData);
+          setSession(session);
+          console.log('Logged in user:', session.username);
+          console.log('Role:', session.role);
+        }
+      } catch (e) {
+        console.error('Failed to load session', e);
+      }
+    };
+
+    loadSession();
+  }, []);
 
   const handleSaveEvaluation = async (player: Player) => {
     const evaluationData: EvaluationData = {
@@ -22,7 +44,7 @@ export default function PerformanceScreen() {
       'Ft_Athl': player.fitnessAthletScore,
       'Ft_Head': player.fitnessHeadScore,
       'Ft_Heart': player.fitnessHeartScore,
-      'Tn_Athl': player.tennisAtheletScore,
+      'Tn_Athl': player.tennisAthletScore,
       'Tn_head': player.tennisHeadScore,
       'Tn_Heart': player.tennisHeartScore,
     };
@@ -141,6 +163,7 @@ export default function PerformanceScreen() {
       <PlayerEvaluationModal
         visible={modalVisible}
         player={selectedPlayer}
+        session={session}
         onClose={handleCloseModal}
         onSave={handleSaveEvaluation}
       />
