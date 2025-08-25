@@ -59,6 +59,20 @@ export default function Index() {
 
         {/* Buttons on top of the image */}
         <View>
+          <Image
+            source={require('../../assets/images/tennis-scotland-logo.png')}
+            style={styles.logoLanding}
+            resizeMode="contain"
+          />
+          <View style={styles.playerInfoLanding}>
+            <Image source={require('../../assets/images/profileImage.png')} style={styles.profileImage} />
+            <View style={styles.nameRankContainer}>
+              <Text style={styles.playerName}>Alan Curran</Text>
+              <Text style={styles.locationText}>Livington, Scotland</Text>
+            </View>
+            <Image source={require('../../assets/images/country.png')}
+              style={styles.countryImage} />
+          </View>
           <View style={[styles.containerItem, { opacity: 0.5 }]}>
             <Text style={styles.playerName}>Self Evaluation</Text>
           </View>
@@ -239,10 +253,48 @@ const styles = StyleSheet.create({
     left: 0,
     zIndex: 0,
   },
+  profileImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 40,
+    marginTop: -15,
+    marginBottom: 10,
+  },
+  countryImage: {
+    width: 30,
+    height: 30,
+    marginTop: -15,
+  },
+  nameRankContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+
+  },
+  locationText: {
+    fontSize: 8,
+    color: '#ffffff',
+    fontWeight: '400',
+
+    marginBottom: 12,
+  },
+  playerInfoLanding: {
+    display: 'flex',
+    flexDirection: 'row',   // keep items in one line
+    gap: 10,                // spacing between items (RN 0.71+ supports gap)
+    alignItems: 'center',   // vertical centering
+    justifyContent: 'center', // horizontal centering
+  },
+  playerInfo: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 30,
+    alignItems: 'center',
+  },
   playerName: {
     display: 'flex',
     fontFamily: 'Segoe UI',
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '600',
     color: '#ffffff',
     alignItems: 'center',
@@ -272,6 +324,14 @@ const styles = StyleSheet.create({
     height: '100%',
     maxWidth: 500,
     maxHeight: 500,
+  },
+  logoLanding: {
+    position: 'absolute',
+    top: -120,
+    left: -20,
+    width: 180,
+    height: 60,
+    zIndex: 10,
   },
   logo: {
     position: 'absolute',
