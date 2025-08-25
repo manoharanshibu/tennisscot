@@ -361,11 +361,15 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   textTitleContainer: {
-    display: 'flex',
-    alignItems: 'stretch'
+
+    flexDirection: 'row',       // puts text and image in one line
+    alignItems: 'center',       // vertically aligns them
+    justifyContent: 'center',   // centers them horizontally
+    marginVertical: 16,
+    gap: 15,
+    marginTop: 40,
   },
   textTitle: {
-    marginTop: 20,
     color: '#FFFFFF',
     boxShadow: '3px 3px 6px var(--sds- size - stroke - focus - ring) #000000',
     fontSize: 24,
