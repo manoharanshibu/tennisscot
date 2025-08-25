@@ -211,7 +211,7 @@ export default function Index() {
             </View>
           </View>
         </ScrollView>
-        <Text style={styles.version}>Version 5</Text>
+        <Text style={styles.version}>Version 6</Text>
       </SafeAreaView>
     );
   }
