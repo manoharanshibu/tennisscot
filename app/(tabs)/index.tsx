@@ -199,6 +199,15 @@ export default function Index() {
                   <Text style={styles.loginButtonText}>Login</Text>
                 </TouchableOpacity>
               </View>
+              <View style={styles.textTitleContainer}>
+                <Text style={styles.textTitle}>Practice... Perform...  WIN</Text>
+                <Image
+                  source={require('../../assets/images/Trophy.png')}
+                  resizeMode="contain"
+                />
+              </View>
+
+
             </View>
           </View>
         </ScrollView>
@@ -285,7 +294,7 @@ const styles = StyleSheet.create({
   formContainer: {
     padding: 32,
     marginHorizontal: 20,
-    marginTop: 40,
+    marginTop: -30,
     elevation: 8,
     maxWidth: 600,
     maxHeight: 600,
@@ -350,6 +359,16 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#ffffff',
     marginLeft: 8,
+  },
+  textTitleContainer: {
+    display: 'flex',
+    alignItems: 'stretch'
+  },
+  textTitle: {
+    marginTop: 20,
+    color: '#FFFFFF',
+    boxShadow: '3px 3px 6px var(--sds- size - stroke - focus - ring) #000000',
+    fontSize: 24,
   },
   bottomImage: {
     position: 'absolute',

@@ -1,91 +1,84 @@
-import React from 'react'; import { Tabs } from 'expo-router';
-import { Image } from 'react-native';
+import React, { useEffect } from 'react';
+import { Tabs } from 'expo-router';
+import { Image, ImageSourcePropType } from 'react-native';
 import { useSession } from '@/components/SessionContext';
 
+// Icon map for each tab
+const TAB_ICONS: Record<string, ImageSourcePropType> = {
+  index: require('../../assets/images/Home.png'),
+  performance: require('../../assets/images/Performance.png'),
+  scores: require('../../assets/images/Scores.png'),
+  notifications: require('../../assets/images/Notifications.png'),
+  settings: require('../../assets/images/Settings.png'),
+};
+
+// Tab icon component that updates based on login state
+const TabIcon = ({
+  source,
+  enabled,
+}: {
+  source: ImageSourcePropType;
+  enabled: boolean;
+}) => (
+  <Image
+    source={source}
+    resizeMode="contain"
+    style={{
+      tintColor: enabled ? undefined : 'gray',
+      opacity: enabled ? 1 : 0.5,
+    }}
+  />
+);
+
 export default function TabLayout() {
-  const { session } = useSession(); // Use context instead of local state
-  const tabIcon = (source: any, enabled: boolean) => (<Image source={source} resizeMode="contain" style={!enabled ? { tintColor: 'gray', opacity: 0.5 } : undefined} />);
+  const { session } = useSession();
+  const isLoggedIn = session?.loggedIn;
+
+  const screenOptions = {
+    headerShown: false,
+    tabBarActiveTintColor: '#059669',
+    tabBarInactiveTintColor: '#6b7280',
+    tabBarStyle: {
+      backgroundColor: '#0061a8',
+      borderTopWidth: 1,
+      borderTopColor: '#e5e7eb',
+      paddingBottom: 8,
+      paddingTop: 8,
+      height: 80,
+    },
+    tabBarLabelStyle: {
+      fontSize: 12,
+      fontWeight: '600',
+      marginTop: 4,
+    },
+  };
+
+  const guardedScreens = ['performance', 'scores', 'notifications', 'settings'];
 
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: '#059669',
-        tabBarInactiveTintColor: '#6b7280',
-        tabBarStyle: {
-          backgroundColor: '#0061a8',
-          borderTopWidth: 1,
-          borderTopColor: '#e5e7eb',
-          paddingBottom: 8,
-          paddingTop: 8,
-          height: 80,
-        },
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '600',
-          marginTop: 4,
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: '',
-          tabBarIcon: () => tabIcon(require('../../assets/images/Home.png'), true),
-        }}
-      />
-
-      <Tabs.Screen
-        name="performance"
-        listeners={{
-          tabPress: e => {
-            if (!session?.loggedIn) e.preventDefault();
-          },
-        }}
-        options={{
-          title: '',
-          tabBarIcon: () => tabIcon(require('../../assets/images/Performance.png'), session?.loggedIn),
-        }}
-      />
-
-      <Tabs.Screen
-        name="scores"
-        listeners={{
-          tabPress: e => {
-            if (!session?.loggedIn) e.preventDefault();
-          },
-        }}
-        options={{
-          title: '',
-          tabBarIcon: () => tabIcon(require('../../assets/images/Scores.png'), session?.loggedIn),
-        }}
-      />
-
-      <Tabs.Screen
-        name="notifications"
-        listeners={{
-          tabPress: e => {
-            if (!session?.loggedIn) e.preventDefault();
-          },
-        }}
-        options={{
-          title: '',
-          tabBarIcon: () => tabIcon(require('../../assets/images/Notifications.png'), session?.loggedIn),
-        }}
-      />
-
-      <Tabs.Screen
-        name="settings"
-        listeners={{
-          tabPress: e => {
-            if (!session?.loggedIn) e.preventDefault();
-          },
-        }}
-        options={{
-          title: '',
-          tabBarIcon: () => tabIcon(require('../../assets/images/Settings.png'), session?.loggedIn),
-        }}
-      />
+    // 👇 Key changes when isLoggedIn changes = force re-render
+    <Tabs key={isLoggedIn ? 'loggedIn' : 'loggedOut'} screenOptions={screenOptions}>
+      {Object.entries(TAB_ICONS).map(([name, icon]) => (
+        <Tabs.Screen
+          key={name}
+          name={name}
+          listeners={
+            guardedScreens.includes(name)
+              ? {
+                tabPress: e => {
+                  if (!isLoggedIn) e.preventDefault();
+                },
+              }
+              : undefined
+          }
+          options={{
+            title: '',
+            tabBarIcon: () => (
+              <TabIcon source={icon} enabled={name === 'index' || isLoggedIn} />
+            ),
+          }}
+        />
+      ))}
     </Tabs>
   );
-} 
+}
