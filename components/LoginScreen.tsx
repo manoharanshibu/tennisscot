@@ -138,7 +138,7 @@ export default function LoginScreen() {
           </View>
         </View>
       </ScrollView>
-      <Text style={styles.version}>Version 2.1</Text>
+      <Text style={styles.version}>Version 5</Text>
     </SafeAreaView>
   );
 }

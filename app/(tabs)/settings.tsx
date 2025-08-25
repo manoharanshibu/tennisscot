@@ -1,15 +1,29 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Trophy } from 'lucide-react-native';
+import { router } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SettingsScreen() {
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.setItem('session', JSON.stringify({ loggedIn: false }));
+      router.replace('/');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient
-        colors={['#1e40af', '#1e3a8a']}
-        style={styles.header}
-      >
+      <LinearGradient colors={['#1e40af', '#1e3a8a']} style={styles.header}>
         <Trophy size={32} color="#ffffff" style={styles.headerIcon} />
         <Text style={styles.headerTitle}>Settings</Text>
         <Text style={styles.headerSubtitle}>Settings Page</Text>
@@ -17,11 +31,9 @@ export default function SettingsScreen() {
 
       <View style={styles.content}>
         <View style={styles.comingSoonContainer}>
-          <Trophy size={48} color="#d1d5db" />
-          <Text style={styles.comingSoonTitle}>Coming Soon</Text>
-          <Text style={styles.comingSoonText}>
-            Tournament listings and registration will be available here soon.
-          </Text>
+          <TouchableOpacity onPress={handleLogout} activeOpacity={0.95}>
+            <Text style={styles.logoutText}>Logout</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
@@ -66,17 +78,9 @@ const styles = StyleSheet.create({
   comingSoonContainer: {
     alignItems: 'center',
   },
-  comingSoonTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#374151',
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  comingSoonText: {
-    fontSize: 16,
-    color: '#6b7280',
-    textAlign: 'center',
-    lineHeight: 24,
+  logoutText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#1d4ed8',
   },
 });

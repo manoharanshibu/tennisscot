@@ -24,17 +24,6 @@ export default function LandingScreen() {
       <TouchableOpacity style={styles.button} onPress={() => router.push('/book')}>
         <Text style={styles.buttonText}>Book a Court</Text>
       </TouchableOpacity>
-
-      <TouchableOpacity style={styles.button} onPress={() => {
-        try {
-          // Store session info in AsyncStorage
-          AsyncStorage.setItem('session', JSON.stringify({ loggedIn: false }));
-        } catch (error) {
-
-        }
-      }}>
-        <Text style={styles.buttonText}>Logout</Text>
-      </TouchableOpacity>
     </SafeAreaView>
   );
 }

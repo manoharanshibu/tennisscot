@@ -1,5 +1,5 @@
 // app/index.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -16,62 +16,69 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { LogIn, UserPlus, Lock, User } from 'lucide-react-native';
 import { ROLE_TYPES } from './constants';
+import { useFocusEffect } from '@react-navigation/native';
+import { useSession } from '@/components/SessionContext';
+
 
 export default function Index() {
-  const [loggedIn, setLoggedIn] = useState(false);
 
-  useEffect(() => {
-    const loadSession = async () => {
-      try {
-        const sessionData = await AsyncStorage.getItem('session');
-        if (sessionData) {
-          const session = JSON.parse(sessionData);
-          setLoggedIn(session.loggedIn);
-          console.log('Logged in user:', session.username);
-          console.log('Role:', session.role);
+  const { session, setSession } = useSession(); // <-- use context
+
+
+  // Load session every time the screen comes into focus (important after logout)
+  useFocusEffect(
+    useCallback(() => {
+      const loadSession = async () => {
+        try {
+          const data = await AsyncStorage.getItem('session');
+          if (data) {
+            const { username, loggedIn, role } = JSON.parse(data);
+            console.log('>>> Session on home page:', { username, loggedIn, role });
+            setSession({ username, loggedIn, role });
+          } else {
+            setSession(null);
+          }
+        } catch (e) {
+          console.error('Failed to load session on home page:', e);
         }
-      } catch (e) {
-        console.error('Failed to load session', e);
-      }
-    };
+      };
 
-    loadSession();
-  }, []);
+      loadSession();
+    }, [])
+  );
 
   function LandingScreen() {
     return (
       <SafeAreaView style={styles.container}>
-        <Text style={styles.title}>Welcome!</Text>
+        {/* Background image at the bottom */}
+        <Image
+          source={require('../../assets/images/bg.png')}
+          style={styles.bottomImage}
+          resizeMode="cover"
+        />
 
-        <TouchableOpacity style={styles.button} onPress={() => router.push('/evaluation')}>
-          <Text style={styles.buttonText}>Self Evaluation</Text>
-        </TouchableOpacity>
+        {/* Buttons on top of the image */}
+        <View>
+          <View style={[styles.containerItem, { opacity: 0.5 }]}>
+            <Text style={styles.playerName}>Self Evaluation</Text>
+          </View>
 
-        <TouchableOpacity style={styles.button} onPress={() => router.push('/performance')}>
-          <Text style={styles.buttonText}>Performance Report</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.containerItem}
+            onPress={() => router.push('/performance')}
+            activeOpacity={0.95}
+          >
+            <Text style={styles.playerName}>Performance Report</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button} onPress={() => router.push('/schedules')}>
-          <Text style={styles.buttonText}>Schedules</Text>
-        </TouchableOpacity>
+          <View style={[styles.containerItem, { opacity: 0.5 }]}>
+            <Text style={styles.playerName}>Schedules</Text>
+          </View>
 
-        <TouchableOpacity style={styles.button} onPress={() => router.push('/book')}>
-          <Text style={styles.buttonText}>Book a Court</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={async () => {
-            try {
-              await AsyncStorage.removeItem('session');
-              setLoggedIn(false);
-            } catch (error) {
-              console.error('Logout failed:', error);
-            }
-          }}
-        >
-          <Text style={styles.buttonText}>Logout</Text>
-        </TouchableOpacity>
+          <View style={[styles.containerItem, { opacity: 0.5 }]}>
+            <Text style={styles.playerName}>Book a Court</Text>
+          </View>
+        </View>
       </SafeAreaView>
     );
   }
@@ -106,11 +113,12 @@ export default function Index() {
       }
 
       try {
-        await AsyncStorage.setItem(
-          'session',
-          JSON.stringify({ username, role, loggedIn: true })
-        );
-        setLoggedIn(true);
+        const sessionData = { username, role, loggedIn: true };
+
+        await AsyncStorage.setItem('session', JSON.stringify(sessionData));
+
+        console.log('Logging in');
+        setSession(sessionData);
       } catch (error) {
         console.error('Error saving session', error);
         Alert.alert('Error', 'Unable to save session data');
@@ -194,17 +202,44 @@ export default function Index() {
             </View>
           </View>
         </ScrollView>
-        <Text style={styles.version}>Version 2.1</Text>
+        <Text style={styles.version}>Version 5</Text>
       </SafeAreaView>
     );
   }
 
-  return loggedIn ? <LandingScreen /> : <LoginScreen />;
+  return session?.loggedIn ? <LandingScreen /> : <LoginScreen />;
 }
 
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+  containerItem: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#0061A8',
+    boxShadow: '2px 6px 20px 0px #000000',
+    margin: 20,
+    width: 319,
+    height: 72,
+    textAlign: 'center',
+  },
+  backgroundImage: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    zIndex: 0,
+  },
+  playerName: {
+    display: 'flex',
+    fontFamily: 'Segoe UI',
+    fontSize: 24,
+    fontWeight: '600',
+    color: '#ffffff',
+    alignItems: 'center',
+    margin: 4,
+    textAlign: 'center',
+  },
   safeArea: {
     flex: 1,
     backgroundColor: '#0061a8',
@@ -316,11 +351,20 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     marginLeft: 8,
   },
+  bottomImage: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    width: '100%',
+    height: 200, // Adjust height depending on image
+    zIndex: -1,
+  },
+
   container: {
     flex: 1,
     backgroundColor: '#0061a8',
-    padding: 20,
     justifyContent: 'center',
+    alignItems: 'center'
   },
   title: {
     fontSize: 28,
