@@ -102,6 +102,8 @@ export default function PlayerEvaluationModal({
                 <Text style={styles.playerName}>{player.name}</Text>
                 <Text style={styles.locationText}>{player.location}</Text>
               </View>
+              <Image source={require('../assets/images/country.png')}
+                style={styles.countryImage} />
             </View>
           </View>
 
@@ -206,11 +208,19 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
+    marginTop: -15,
+    marginBottom: 10,
+  },
+  countryImage: {
+    width: 30,
+    height: 30,
+    marginTop: -15,
   },
   playerInfo: {
     display: 'flex',
     flexDirection: 'row',
     gap: 30,
+    alignItems: 'center',
   },
   nameRankContainer: {
     flexDirection: 'column',

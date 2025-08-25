@@ -7,6 +7,7 @@ export interface Player {
   phone: string;
   email: string;
   profileImage: string;
+  countryImage?: string;
   joinDate: string;
   matchesPlayed: number;
   winRate: number;
