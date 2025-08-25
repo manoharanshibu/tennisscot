@@ -88,10 +88,11 @@ export default function Index() {
           <View style={[styles.containerItem, { opacity: 0.5 }]}>
             <Text style={styles.playerName}>Schedules</Text>
           </View>
-
-          <View style={[styles.containerItem, { opacity: 0.5 }]}>
+          <TouchableOpacity
+            style={styles.containerItem}
+            onPress={() => router.push('/book-court')}>
             <Text style={styles.playerName}>Book a Court</Text>
-          </View>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     );

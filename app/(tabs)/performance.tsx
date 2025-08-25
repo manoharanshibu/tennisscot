@@ -104,7 +104,7 @@ export default function PerformanceScreen() {
         <View style={styles.searchContainer}>
           <Image
             source={require('../../assets/images/tennis-scotland-logo.png')}
-            style={{ width: 108, height: 45 }}
+            style={{ width: 140, height: 60 }}
             resizeMode="contain"
           />
           <View style={styles.iconContainer}>
@@ -121,6 +121,15 @@ export default function PerformanceScreen() {
           </View>
         </View>
         <Text style={styles.headerTitle}>{formattedDate}</Text>
+        <View style={styles.locationIconContainer}>
+          <Image
+            source={require('../../assets/images/locationIcon.png')}
+            style={{ width: 22, height: 26, marginTop: -5 }}
+            resizeMode="contain"
+          />
+          <Text style={styles.locationTitle}>Ladywell Community Tennis Courts</Text>
+        </View>
+
       </View>
 
       <View style={styles.content}>
@@ -185,16 +194,30 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 0,
     backgroundColor: '#0061a8',
   },
-  iconContainer: {
+  locationIconContainer: {
     display: 'flex',
     flexDirection: 'row',
     gap: 10,
+    marginTop: 10,
+  },
+  iconContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 20,
   },
   searchContainer: {
     display: 'flex',
     flexDirection: 'row',
-    minWidth: 250,
+    minWidth: 300,
     justifyContent: 'space-between',
+  },
+  locationTitle: {
+    fontFamily: 'Segoe UI',
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#ffffff',
+    textAlign: 'center',
   },
   headerTitle: {
     fontFamily: 'Segoe UI',
@@ -206,7 +229,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingTop: 20,
+    marginTop: -20,
   },
   resultsHeader: {
     paddingHorizontal: 16,
