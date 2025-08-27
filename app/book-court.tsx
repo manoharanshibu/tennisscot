@@ -8,9 +8,9 @@ import {
   ScrollView,
   TouchableOpacity,
   SafeAreaView,
+  Modal,
 } from 'react-native';
 
-// Mock court data
 const courts = [
   {
     id: '1',
@@ -38,21 +38,80 @@ const courts = [
   },
 ];
 
-// Mock dates
 const availableDates = [
-  { label: 'MON 1st Aug', availability: 'high' },
-  { label: 'TUE 2nd Aug', availability: 'medium' },
-  { label: 'WED 3rd Aug', availability: 'low' },
-  { label: 'THU 4th Aug', availability: 'high' },
-  { label: 'FRI 5th Aug', availability: 'medium' },
+  { label: '1st Aug', day: 'MON', availability: 'high' },
+  { label: '2nd Aug', day: 'TUE', availability: 'medium' },
+  { label: '3rd Aug', day: 'WED', availability: 'low' },
+  { label: '4th Aug', day: 'THU', availability: 'high' },
+  { label: '5th Aug', day: 'FRI', availability: 'medium' },
 ];
 
+const timeSlots = [
+  { label: '9 AM', available: true },
+  { label: '10 AM', available: false },
+  { label: '11 AM', available: true },
+  { label: '12 PM', available: true },
+  { label: '1 PM', available: false },
+  { label: '2 PM', available: true },
+];
 
 export default function BookCourtScreen() {
   const [selectedCourt, setSelectedCourt] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTime, setSelectedTime] = useState(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showBookingDone, setShowBookingDone] = useState(false);
+
+  const renderLocationInfo = () => (
+    <View style={styles.selectedCourtRow}>
+      <Image
+        source={require('../assets/images/locationIcon.png')}
+        style={styles.locationIcon}
+      />
+      <Text style={styles.selectedCourtText}>{selectedCourt?.name}</Text>
+    </View>
+  );
+
+  const getStepTitle = () => {
+    if (!selectedCourt) return 'Select the Court';
+    if (!selectedDate) return 'Select the Date';
+    return `${selectedDate?.label} - Select the Time`;
+  };
+
+  const handleTimeSelect = (time) => {
+    setSelectedTime(time);
+    setShowConfirmation(true);
+  };
+
+  const confirmBooking = () => {
+    setShowConfirmation(false);
+    setShowBookingDone(true);
+  };
+
+  const reset = () => {
+    setSelectedCourt(null);
+    setSelectedDate(null);
+    setSelectedTime(null);
+    setShowBookingDone(false);
+  };
+
+  const renderSuperscriptLabel = (label) => {
+    const match = label.match(/^(\d+)([a-z]{2})(.*)$/i);
+    if (!match) return <Text style={styles.dateText}>{label}</Text>;
+
+    const [, number, suffix, rest] = match;
+
+    return (
+      <View style={styles.dateTextRow}>
+        <Text style={styles.dateText}>{number}</Text>
+        <Text style={[styles.dateText, styles.superscript]}>{suffix}</Text>
+        <Text style={styles.dateText}>{rest}</Text>
+      </View>
+    );
+  };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ backgroundColor: '#0061a8', flex: 1 }}>
       <Image
         source={require('../assets/images/tennis-scotland-logo.png')}
         style={styles.logo}
@@ -60,31 +119,19 @@ export default function BookCourtScreen() {
       />
 
       <ScrollView contentContainerStyle={styles.container}>
-        {/* Step Title */}
-        <Text style={styles.title}>
-          {selectedCourt ? 'Select the Date' : 'Select the Court'}
-        </Text>
+        <Text style={styles.title}>{getStepTitle()}</Text>
 
-        {/* Selected court summary (in Date step) */}
-        {selectedCourt && (
-          <View style={styles.selectedCourtRow}>
-            <Image
-              source={require('../assets/images/locationIcon.png')}
-              style={styles.locationIcon}
-            />
-            <Text style={styles.selectedCourtText}>{selectedCourt.name}</Text>
-          </View>
-        )}
+        {selectedCourt && renderLocationInfo()}
 
-        {/* Court Selection Step */}
+        {/* Court Selection */}
         {!selectedCourt &&
-          courts.map(court => (
+          courts.map((court) => (
             <TouchableOpacity
               key={court.id}
               style={styles.card}
               onPress={() => setSelectedCourt(court)}
             >
-              <Text style={styles.courtName}>{court.name}</Text>
+              <Text style={styles.courtName}>{court?.name}</Text>
               <Text style={styles.distance}>{court.distance}</Text>
               <View style={styles.locationRow}>
                 <Image
@@ -96,40 +143,105 @@ export default function BookCourtScreen() {
             </TouchableOpacity>
           ))}
 
-        {/* Date Selection Step */}
-        {selectedCourt && (
+        {/* Date Selection */}
+        {selectedCourt && !selectedDate && (
           <View style={styles.dateGrid}>
             {availableDates.map((date, index) => {
-              let backgroundColor = '#f3f4f6'; // default
-
-              if (date.availability === 'low') backgroundColor = '#fecaca';       // red-200
-              else if (date.availability === 'medium') backgroundColor = '#fef08a'; // yellow-200
-              else if (date.availability === 'high') backgroundColor = '#bbf7d0';   // green-200
+              let backgroundColor = '#f3f4f6';
+              if (date.availability === 'low') backgroundColor = '#e23737ff';
+              else if (date.availability === 'medium') backgroundColor = '#fef08aff';
+              else if (date.availability === 'high') backgroundColor = '#bbf7d0';
 
               return (
-                <TouchableOpacity key={index} style={[styles.dateBox, { backgroundColor }]}>
-                  <Text style={styles.dateText}>{date.label}</Text>
+                <TouchableOpacity
+                  key={index}
+                  style={[styles.dateBox, { backgroundColor }]}
+                  onPress={() => setSelectedDate(date)}
+                >
+                  <View style={styles.dateTextRow}>
+                    <Text style={styles.dateText}>{date.day} </Text>
+                    {renderSuperscriptLabel(date.label)}
+                  </View>
                 </TouchableOpacity>
               );
             })}
           </View>
-
         )}
 
-        {/* Back button */}
+        {/* Time Selection */}
+        {selectedCourt && selectedDate && (
+          <View style={styles.dateGrid}>
+            {timeSlots.map((slot, i) => (
+              <TouchableOpacity
+                key={i}
+                style={[
+                  styles.timeBox,
+                  {
+                    backgroundColor: slot.available ? '#60FB4BBA' : '#8E85853B',
+                  },
+                ]}
+                disabled={!slot.available}
+                onPress={() => handleTimeSelect(slot)}
+              >
+                <Text style={[styles.dateText, { color: slot.available ? '#065f46' : '#9ca3af' }]}>
+                  {slot?.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+
+        {/* Back Button */}
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => {
-            if (selectedCourt) {
-              setSelectedCourt(null); // Go back to court selection
-            } else {
-              router.back(); // Go back to previous screen
-            }
+            if (selectedTime) setSelectedTime(null);
+            else if (selectedDate) setSelectedDate(null);
+            else if (selectedCourt) setSelectedCourt(null);
+            else router.back();
           }}
         >
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
       </ScrollView>
+
+      {/* Booking Confirmation Modal */}
+      <Modal transparent visible={showConfirmation} animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalTitle}>Check your booking</Text>
+            <Text style={styles.modalItem}>
+              <Text style={{ color: '#248600', fontSize: 20 }}>{selectedDate?.label} {selectedTime?.label} - {parseInt(selectedTime?.label) + 1} AM</Text>
+            </Text>
+            <Text style={styles.modalItem}>{selectedCourt?.name}</Text>
+            <View style={styles.modalButtonRow}>
+              <TouchableOpacity onPress={() => setShowConfirmation(false)} style={styles.cancelBtn}>
+                <Text style={styles.buttonText}>Back</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={confirmBooking} style={styles.confirmBtn}>
+                <Text style={styles.buttonText}>Confirm</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Booking Done Modal */}
+      <Modal transparent visible={showBookingDone} animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalTitle}>Booking Confirmed</Text>
+            <Text style={{ fontSize: 40, textAlign: 'center' }}>👍</Text>
+            <Text style={[styles.modalItem, { color: '#059669', fontWeight: '600' }]}>
+              {selectedDate?.label} {selectedTime?.label} - {parseInt(selectedTime?.label) + 1} AM
+            </Text>
+            <Text style={styles.modalItem}>{selectedCourt?.name}</Text>
+            <TouchableOpacity onPress={reset} style={[styles.confirmBtn, { marginTop: 12 }]}>
+              <Text style={styles.buttonText}>Done</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -144,14 +256,32 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 16,
-    backgroundColor: '#fff',
+    margin: 20,
+    backgroundColor: '#ffffff',
+    paddingBottom: 50,
+    textAlign: 'left',
+    alignItems: 'center',
+    borderRadius: 16,
   },
   title: {
     fontSize: 20,
     fontWeight: '600',
     marginBottom: 16,
+    color: '#003B89',
+    paddingTop: 10,
+  },
+  dateTextRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    flexWrap: 'nowrap',
+  },
+  superscript: {
+    fontSize: 10,
+    lineHeight: 12,
+    textAlignVertical: 'top',
   },
   card: {
+    width: '100%',
     borderWidth: 1,
     borderColor: '#d1d5db',
     borderRadius: 8,
@@ -162,62 +292,125 @@ const styles = StyleSheet.create({
   courtName: {
     fontSize: 16,
     fontWeight: '600',
+    color: '#000',
     marginBottom: 8,
   },
   distance: {
-    fontSize: 14,
-    color: '#059669',
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#4AAA00',
     marginBottom: 8,
   },
   locationRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 6,
   },
   locationIcon: {
-    width: 16,
-    height: 16,
+    width: 18,
+    height: 22,
     marginRight: 6,
     tintColor: '#4b5563',
   },
   address: {
-    fontSize: 14,
-    color: '#374151',
     flexShrink: 1,
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1F3EAF',
   },
   selectedCourtRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 16,
   },
   selectedCourtText: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#111827',
+    color: '#000000',
   },
   dateGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    gap: 8,
     marginBottom: 24,
   },
   dateBox: {
-    backgroundColor: '#f3f4f6',
+    borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 16,
-    borderRadius: 8,
     marginRight: 12,
     marginBottom: 12,
+    width: 120
+  },
+  timeBox: {
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginRight: 12,
+    marginBottom: 12,
+    width: 80
   },
   dateText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#111827',
+    color: '#000',
   },
   backButton: {
     marginTop: 20,
   },
   backText: {
-    color: '#2563eb',
+    color: '#000',
     fontSize: 16,
   },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalBox: {
+    backgroundColor: '#fff',
+    padding: 24,
+    borderRadius: 12,
+    width: '80%',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontWeight: '600',
+    marginBottom: 10,
+    fontSize: 20,
+    color: '#003B89'
+  },
+  modalItem: {
+    fontSize: 16,
+    marginVertical: 8,
+    textAlign: 'center',
+
+  },
+  modalButtonRow: {
+    flexDirection: 'row',
+    marginTop: 20,
+    gap: 16,
+  },
+  cancelBtn: {
+    backgroundColor: '#0267B9',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    width: 115,
+    height: 42,
+  },
+  confirmBtn: {
+    backgroundColor: '#0267B9',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    width: 115,
+    height: 42,
+  },
+  buttonText: {
+    color: 'white',
+    textAlign: 'center', fontSize: 16,
+    fontWeight: '600',
+  }
 });
