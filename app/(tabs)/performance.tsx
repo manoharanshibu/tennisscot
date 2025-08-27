@@ -1,5 +1,15 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Image, View, Text, FlatList, StyleSheet, SafeAreaView, TouchableOpacity, Alert } from 'react-native';
+import {
+  Image,
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+  Modal,
+  Alert,
+} from 'react-native';
 import PlayerCard from '@/components/PlayerCard';
 import { players } from '@/data/players';
 import { Player } from '@/types/Player';
@@ -11,8 +21,8 @@ export default function PerformanceScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [showEvaluationDone, setShowEvaluationDone] = useState(false);
   const [showAllPlayers, setShowAllPlayers] = useState(false);
-
   const [session, setSession] = useState(null);
 
   useEffect(() => {
@@ -37,10 +47,10 @@ export default function PerformanceScreen() {
   const handleSaveEvaluation = async (player: Player) => {
     const evaluationData: EvaluationData = {
       'Player-ID': `P${player.id}`,
-      'Session-Id': `S${Date.now()}`, // Generate unique session ID
+      'Session-Id': `S${Date.now()}`,
       'Centre_ID': 'SC_3838',
       'Coach_ID': 'C3838',
-      'Comments': 'comments', // || 'No additional comments provided',
+      'Comments': 'comments',
       'Ft_Athl': player.fitnessAthletScore,
       'Ft_Head': player.fitnessHeadScore,
       'Ft_Heart': player.fitnessHeartScore,
@@ -49,8 +59,21 @@ export default function PerformanceScreen() {
       'Tn_Heart': player.tennisHeartScore,
     };
 
-    const success = await submitPlayerEvaluation(evaluationData);
-    console.log('Saving evaluation for player:', evaluationData);
+    try {
+      console.log('Saving evaluation for player:', evaluationData);
+
+      const success = await submitPlayerEvaluation(evaluationData);
+
+      if (success) {
+        setModalVisible(false);
+        setShowEvaluationDone(true);
+      } else {
+        Alert.alert('Error', 'Failed to submit evaluation.');
+      }
+    } catch (error) {
+      console.error('Evaluation submission failed:', error);
+      Alert.alert('Error', 'Something went wrong. Please try again later.');
+    }
   };
 
   const handlePlayerPress = (player: Player) => {
@@ -75,7 +98,6 @@ export default function PerformanceScreen() {
 
   const displayedPlayers = useMemo(() => {
     const playersToShow = searchQuery.trim() ? filteredPlayers : players;
-    // Show either the first 4 or all based on 'showAllPlayers' flag
     return showAllPlayers ? playersToShow : playersToShow.slice(0, 4);
   }, [filteredPlayers, showAllPlayers, searchQuery]);
 
@@ -144,7 +166,6 @@ export default function PerformanceScreen() {
           renderItem={renderPlayer}
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.listContainer}
         />
 
         {hasMorePlayers && (
@@ -160,7 +181,7 @@ export default function PerformanceScreen() {
               style={[
                 styles.moreIcon,
                 {
-                  transform: [{ rotate: showAllPlayers ? '180deg' : '0deg' }], // Correct rotation
+                  transform: [{ rotate: showAllPlayers ? '180deg' : '0deg' }],
                 },
               ]}
               resizeMode="contain"
@@ -169,6 +190,7 @@ export default function PerformanceScreen() {
         )}
       </View>
 
+      {/* Evaluation Modal */}
       <PlayerEvaluationModal
         visible={modalVisible}
         player={selectedPlayer}
@@ -176,6 +198,24 @@ export default function PerformanceScreen() {
         onClose={handleCloseModal}
         onSave={handleSaveEvaluation}
       />
+
+      {/* Evaluation Done Modal */}
+      <Modal transparent visible={showEvaluationDone} animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalTitle}>Success</Text>
+            <Text style={[styles.modalItem, { color: '#059669', fontWeight: '600' }]}>
+              Thank you for submitting the evaluation!
+            </Text>
+            <TouchableOpacity
+              onPress={() => setShowEvaluationDone(false)}
+              style={[styles.confirmBtn, { marginTop: 12 }]}
+            >
+              <Text style={styles.buttonText}>Done</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -190,37 +230,30 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 30,
     paddingHorizontal: 20,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
     backgroundColor: '#0061a8',
   },
   locationIconContainer: {
-    display: 'flex',
     flexDirection: 'row',
     gap: 10,
     marginTop: 10,
   },
   iconContainer: {
-    display: 'flex',
     flexDirection: 'row',
     gap: 12,
     marginTop: 20,
   },
   searchContainer: {
-    display: 'flex',
     flexDirection: 'row',
     minWidth: 300,
     justifyContent: 'space-between',
   },
   locationTitle: {
-    fontFamily: 'Segoe UI',
     fontSize: 14,
     fontWeight: '600',
     color: '#ffffff',
     textAlign: 'center',
   },
   headerTitle: {
-    fontFamily: 'Segoe UI',
     fontSize: 18,
     fontWeight: '600',
     color: '#ffffff',
@@ -240,7 +273,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   moreButton: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'flex-end',
     borderRadius: 12,
@@ -260,6 +292,37 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontWeight: '600',
   },
-  listContainer: {
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalBox: {
+    backgroundColor: '#fff',
+    padding: 24,
+    borderRadius: 12,
+    width: '80%',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 16,
+  },
+  modalItem: {
+    fontSize: 16,
+    marginVertical: 4,
+    textAlign: 'center',
+  },
+  confirmBtn: {
+    backgroundColor: '#0061a8',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: '600',
   },
 });
