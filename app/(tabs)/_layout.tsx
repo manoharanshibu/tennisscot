@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Tabs } from 'expo-router';
+import { router, Tabs, usePathname } from 'expo-router';
 import { Image, ImageSourcePropType } from 'react-native';
 import { useSession } from '@/components/SessionContext';
 
@@ -24,8 +24,8 @@ const TabIcon = ({
     source={source}
     resizeMode="contain"
     style={{
-      tintColor: enabled ? undefined : 'gray',
-      opacity: enabled ? 1 : 0.5,
+      tintColor: enabled ? undefined : 'white',
+      opacity: enabled ? 1 : 0.3,
     }}
   />
 );
@@ -33,6 +33,21 @@ const TabIcon = ({
 export default function TabLayout() {
   const { session } = useSession();
   const isLoggedIn = session?.loggedIn;
+  const pathname = usePathname();
+
+  // 🔒 Redirect to login/home screen if not logged in
+  useEffect(() => {
+    console.log(pathname)
+    if (pathname !== '/' && !session?.loggedIn) {
+      try {
+        router.replace('/(tabs)');
+
+      } catch (error) {
+        console.error(error);
+
+      }
+    }
+  }, [session]);
 
   const screenOptions = {
     headerShown: false,
@@ -67,6 +82,7 @@ export default function TabLayout() {
               ? {
                 tabPress: e => {
                   if (!isLoggedIn) e.preventDefault();
+                  if (name === 'scores' || name === 'notifications') e.preventDefault();
                 },
               }
               : undefined
@@ -74,7 +90,7 @@ export default function TabLayout() {
           options={{
             title: '',
             tabBarIcon: () => (
-              <TabIcon source={icon} enabled={name === 'index' || isLoggedIn} />
+              <TabIcon source={icon} enabled={(name !== 'scores' && name !== 'notifications') && (name === 'index' || isLoggedIn)} />
             ),
           }}
         />

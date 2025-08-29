@@ -23,6 +23,7 @@ export default function PerformanceScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [showEvaluationDone, setShowEvaluationDone] = useState(false);
   const [showAllPlayers, setShowAllPlayers] = useState(false);
+
   const [session, setSession] = useState(null);
 
   useEffect(() => {
@@ -50,7 +51,7 @@ export default function PerformanceScreen() {
       'Session-Id': `S${Date.now()}`,
       'Centre_ID': 'SC_3838',
       'Coach_ID': 'C3838',
-      'Comments': 'comments',
+      'Comments': player?.comment || '',
       'Ft_Athl': player.fitnessAthletScore,
       'Ft_Head': player.fitnessHeadScore,
       'Ft_Heart': player.fitnessHeartScore,
@@ -60,10 +61,7 @@ export default function PerformanceScreen() {
     };
 
     try {
-      console.log('Saving evaluation for player:', evaluationData);
-
       const success = await submitPlayerEvaluation(evaluationData);
-
       if (success) {
         setModalVisible(false);
         setShowEvaluationDone(true);
@@ -88,11 +86,9 @@ export default function PerformanceScreen() {
 
   const filteredPlayers = useMemo(() => {
     if (!searchQuery.trim()) return players;
-
     return players.filter(player =>
       player.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      player.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      player.membershipType.toLowerCase().includes(searchQuery.toLowerCase())
+      player.location.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [searchQuery]);
 
@@ -151,7 +147,6 @@ export default function PerformanceScreen() {
           />
           <Text style={styles.locationTitle}>Ladywell Community Tennis Courts</Text>
         </View>
-
       </View>
 
       <View style={styles.content}>
@@ -175,7 +170,6 @@ export default function PerformanceScreen() {
             activeOpacity={0.7}
           >
             <Text style={styles.moreText}>{showAllPlayers ? 'Show Less' : 'More Players'}</Text>
-
             <Image
               source={require('../../assets/images/more.png')}
               style={[
@@ -302,7 +296,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 24,
     borderRadius: 12,
-    width: '80%',
+    width: '70%',
     alignItems: 'center',
   },
   modalTitle: {

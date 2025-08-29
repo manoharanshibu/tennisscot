@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert, AppState } from 'react-native';
+import { router } from 'expo-router';
 
 interface Session {
   username?: string;
@@ -18,47 +19,50 @@ const SessionContext = createContext<SessionContextValue | undefined>(undefined)
 export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [session, setSession] = useState<Session>({ loggedIn: false });
   const [appState, setAppState] = useState(AppState.currentState);
+  const idleTime = .1;
 
   useEffect(() => {
-    // Load session on initial render
-    const loadSession = async () => {
-      try {
-        const data = await AsyncStorage.getItem('session');
-        if (data) setSession(JSON.parse(data));
-      } catch (e) {
-        console.error('Failed to load session', e);
+    const handleAppStateChange = async (nextAppState: string) => {
+      if (nextAppState === 'background') {
+        const now = new Date().toISOString();
+        await AsyncStorage.setItem('lastBackgrounded', now);
+        console.log('App went to background at:', now);
+      }
+
+      if (nextAppState === 'active') {
+        const lastTime = await AsyncStorage.getItem('lastBackgrounded');
+        if (lastTime) {
+          const diffMs = new Date().getTime() - new Date(lastTime).getTime();
+          const diffMins = diffMs / 1000 / 60;
+          if (diffMins > idleTime) {
+            logoutUser();
+            console.log('App likely terminated and restarted');
+          } else {
+            console.log('App just resumed from background');
+          }
+        }
       }
     };
-    loadSession();
 
-    // Handle app state changes (foreground, background, etc.)
-    const handleAppStateChange = (nextAppState: string) => {
-      if (appState.match(/inactive|background/) && nextAppState === 'active') {
-        // App is coming to the foreground
-        console.log('App is active');
-      } else if (nextAppState === 'background') {
-        // App is going to the background, clear session
-        console.log('App is in background, logging out');
-        logoutUser();
-      }
-      setAppState(nextAppState);
-    };
-
-    const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
-
-    // Clean up listener on unmount
-    return () => {
-      appStateSubscription.remove();  // Correct way to remove the subscription
-    };
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
+    return () => subscription.remove();
   }, [appState]);
+
 
   // Function to logout and clear session
   const logoutUser = async () => {
     try {
       await AsyncStorage.removeItem('session'); // Remove session data from AsyncStorage
       setSession({ loggedIn: false }); // Update context state
+      try {
+        router.replace('/(tabs)');
+
+      } catch (error) {
+        console.error(error);
+
+      }
     } catch (e) {
-      console.error('Failed to logout', e);
+      console.error('Fail)ed to logout', e);
     }
   };
 

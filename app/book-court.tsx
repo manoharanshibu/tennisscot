@@ -11,49 +11,164 @@ import {
   Modal,
 } from 'react-native';
 
-const courts = [
+const bookingData = [
   {
     id: '1',
     name: 'Ladywell Community Tennis Courts',
     distance: '0.8 miles',
     address: 'Harrysmuir Path, Willowbank Livingston EH54 6HN',
+    dates: [
+      {
+        label: '1st Aug',
+        day: 'MON',
+        availability: 'high',
+        times: [
+          { label: '9 AM', available: true },
+          { label: '10 AM', available: false },
+          { label: '11 AM', available: true },
+          { label: '12 PM', available: true },
+          { label: '1 PM', available: false },
+          { label: '2 PM', available: true },
+        ],
+      },
+      {
+        label: '2nd Aug',
+        day: 'TUE',
+        availability: 'medium',
+        times: [
+          { label: '9 AM', available: true },
+          { label: '10 AM', available: false },
+          { label: '11 AM', available: true },
+          { label: '12 PM', available: true },
+          { label: '1 PM', available: false },
+          { label: '2 PM', available: true },
+        ],
+      },
+      {
+        label: '3rd Aug',
+        day: 'WED',
+        availability: 'low',
+        times: [
+          { label: '9 AM', available: true },
+          { label: '10 AM', available: false },
+          { label: '11 AM', available: true },
+          { label: '12 PM', available: true },
+          { label: '1 PM', available: false },
+          { label: '2 PM', available: true },
+        ],
+      },
+    ],
   },
   {
     id: '2',
     name: 'Craiglockhart Tennis Centre',
     distance: '5.2 miles',
     address: '177 Colinton Rd, Edinburgh EH14 1BZ',
+    dates: [
+      {
+        label: '1st Aug',
+        day: 'MON',
+        availability: 'medium',
+        times: [
+          { label: '9 AM', available: true },
+          { label: '10 AM', available: true },
+          { label: '11 AM', available: false },
+          { label: '12 PM', available: true },
+        ],
+      },
+      {
+        label: '2nd Aug',
+        day: 'TUE',
+        availability: 'high',
+        times: [
+          { label: '9 AM', available: true },
+          { label: '10 AM', available: true },
+          { label: '11 AM', available: true },
+          { label: '12 PM', available: true },
+          { label: '1 PM', available: true },
+        ],
+      },
+    ],
   },
   {
     id: '3',
-    name: 'St. Margaret’s Park Tennis Courts',
-    distance: '3.7 miles',
-    address: 'St. Margaret’s Park, Meadowbank St, Corstorphine EH12 7SX',
+    name: 'Inverleith Park Tennis Courts',
+    distance: '3.4 miles',
+    address: 'Arboretum Pl, Edinburgh EH3 5NZ',
+    dates: [
+      {
+        label: '1st Aug',
+        day: 'MON',
+        availability: 'low',
+        times: [
+          { label: '9 AM', available: false },
+          { label: '10 AM', available: false },
+          { label: '11 AM', available: true },
+          { label: '12 PM', available: false },
+          { label: '1 PM', available: true },
+          { label: '2 PM', available: true },
+        ],
+      },
+      {
+        label: '2nd Aug',
+        day: 'TUE',
+        availability: 'medium',
+        times: [
+          { label: '9 AM', available: true },
+          { label: '10 AM', available: true },
+          { label: '11 AM', available: true },
+          { label: '12 PM', available: false },
+          { label: '1 PM', available: false },
+        ],
+      },
+    ],
   },
   {
     id: '4',
-    name: 'Leith Links Tennis Courts',
-    distance: '6.4 miles',
-    address: 'Links Gardens, Leith, Edinburgh EH6 7EB',
+    name: 'Meadowbank Sports Centre',
+    distance: '2.7 miles',
+    address: '139 London Rd, Edinburgh EH7 6AE',
+    dates: [
+      {
+        label: '1st Aug',
+        day: 'MON',
+        availability: 'high',
+        times: [
+          { label: '9 AM', available: true },
+          { label: '10 AM', available: true },
+          { label: '11 AM', available: true },
+          { label: '12 PM', available: true },
+          { label: '1 PM', available: true },
+          { label: '2 PM', available: true },
+        ],
+      },
+      {
+        label: '2nd Aug',
+        day: 'TUE',
+        availability: 'low',
+        times: [
+          { label: '9 AM', available: false },
+          { label: '10 AM', available: false },
+          { label: '11 AM', available: false },
+          { label: '12 PM', available: true },
+        ],
+      },
+      {
+        label: '3rd Aug',
+        day: 'WED',
+        availability: 'medium',
+        times: [
+          { label: '9 AM', available: true },
+          { label: '10 AM', available: true },
+          { label: '11 AM', available: false },
+          { label: '12 PM', available: true },
+          { label: '1 PM', available: true },
+        ],
+      },
+    ],
   },
 ];
 
-const availableDates = [
-  { label: '1st Aug', day: 'MON', availability: 'high' },
-  { label: '2nd Aug', day: 'TUE', availability: 'medium' },
-  { label: '3rd Aug', day: 'WED', availability: 'low' },
-  { label: '4th Aug', day: 'THU', availability: 'high' },
-  { label: '5th Aug', day: 'FRI', availability: 'medium' },
-];
-
-const timeSlots = [
-  { label: '9 AM', available: true },
-  { label: '10 AM', available: false },
-  { label: '11 AM', available: true },
-  { label: '12 PM', available: true },
-  { label: '1 PM', available: false },
-  { label: '2 PM', available: true },
-];
 
 export default function BookCourtScreen() {
   const [selectedCourt, setSelectedCourt] = useState(null);
@@ -100,7 +215,6 @@ export default function BookCourtScreen() {
     if (!match) return <Text style={styles.dateText}>{label}</Text>;
 
     const [, number, suffix, rest] = match;
-
     return (
       <View style={styles.dateTextRow}>
         <Text style={styles.dateText}>{number}</Text>
@@ -125,7 +239,7 @@ export default function BookCourtScreen() {
 
         {/* Court Selection */}
         {!selectedCourt &&
-          courts.map((court) => (
+          bookingData.map((court) => (
             <TouchableOpacity
               key={court.id}
               style={styles.card}
@@ -146,7 +260,7 @@ export default function BookCourtScreen() {
         {/* Date Selection */}
         {selectedCourt && !selectedDate && (
           <View style={styles.dateGrid}>
-            {availableDates.map((date, index) => {
+            {selectedCourt.dates.map((date, index) => {
               let backgroundColor = '#f3f4f6';
               if (date.availability === 'low') backgroundColor = '#e23737ff';
               else if (date.availability === 'medium') backgroundColor = '#fef08aff';
@@ -171,7 +285,7 @@ export default function BookCourtScreen() {
         {/* Time Selection */}
         {selectedCourt && selectedDate && (
           <View style={styles.dateGrid}>
-            {timeSlots.map((slot, i) => (
+            {selectedDate.times.map((slot, i) => (
               <TouchableOpacity
                 key={i}
                 style={[
@@ -183,8 +297,13 @@ export default function BookCourtScreen() {
                 disabled={!slot.available}
                 onPress={() => handleTimeSelect(slot)}
               >
-                <Text style={[styles.dateText, { color: slot.available ? '#065f46' : '#9ca3af' }]}>
-                  {slot?.label}
+                <Text
+                  style={[
+                    styles.dateText,
+                    { color: slot.available ? '#065f46' : '#9ca3af' },
+                  ]}
+                >
+                  {slot.label}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -211,11 +330,16 @@ export default function BookCourtScreen() {
           <View style={styles.modalBox}>
             <Text style={styles.modalTitle}>Check your booking</Text>
             <Text style={styles.modalItem}>
-              <Text style={{ color: '#248600', fontSize: 20 }}>{selectedDate?.label} {selectedTime?.label} - {parseInt(selectedTime?.label) + 1} AM</Text>
+              <Text style={{ color: '#248600', fontSize: 20 }}>
+                {selectedDate?.label} {selectedTime?.label}
+              </Text>
             </Text>
             <Text style={styles.modalItem}>{selectedCourt?.name}</Text>
             <View style={styles.modalButtonRow}>
-              <TouchableOpacity onPress={() => setShowConfirmation(false)} style={styles.cancelBtn}>
+              <TouchableOpacity
+                onPress={() => setShowConfirmation(false)}
+                style={styles.cancelBtn}
+              >
                 <Text style={styles.buttonText}>Back</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={confirmBooking} style={styles.confirmBtn}>
@@ -232,11 +356,16 @@ export default function BookCourtScreen() {
           <View style={styles.modalBox}>
             <Text style={styles.modalTitle}>Booking Confirmed</Text>
             <Text style={{ fontSize: 40, textAlign: 'center' }}>👍</Text>
-            <Text style={[styles.modalItem, { color: '#059669', fontWeight: '600' }]}>
-              {selectedDate?.label} {selectedTime?.label} - {parseInt(selectedTime?.label) + 1} AM
+            <Text
+              style={[styles.modalItem, { color: '#059669', fontWeight: '600' }]}
+            >
+              {selectedDate?.label} {selectedTime?.label}
             </Text>
             <Text style={styles.modalItem}>{selectedCourt?.name}</Text>
-            <TouchableOpacity onPress={reset} style={[styles.confirmBtn, { marginTop: 12 }]}>
+            <TouchableOpacity
+              onPress={reset}
+              style={[styles.confirmBtn, { marginTop: 12 }]}
+            >
               <Text style={styles.buttonText}>Done</Text>
             </TouchableOpacity>
           </View>
@@ -247,19 +376,12 @@ export default function BookCourtScreen() {
 }
 
 const styles = StyleSheet.create({
-  logo: {
-    marginTop: 20,
-    left: 20,
-    width: 180,
-    height: 60,
-    zIndex: 10,
-  },
+  logo: { marginTop: 20, left: 20, width: 180, height: 60, zIndex: 10 },
   container: {
     padding: 16,
     margin: 20,
     backgroundColor: '#ffffff',
     paddingBottom: 50,
-    textAlign: 'left',
     alignItems: 'center',
     borderRadius: 16,
   },
@@ -270,16 +392,8 @@ const styles = StyleSheet.create({
     color: '#003B89',
     paddingTop: 10,
   },
-  dateTextRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    flexWrap: 'nowrap',
-  },
-  superscript: {
-    fontSize: 10,
-    lineHeight: 12,
-    textAlignVertical: 'top',
-  },
+  dateTextRow: { flexDirection: 'row', alignItems: 'flex-start' },
+  superscript: { fontSize: 10, lineHeight: 12, textAlignVertical: 'top' },
   card: {
     width: '100%',
     borderWidth: 1,
@@ -289,58 +403,26 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     backgroundColor: '#f9fafb',
   },
-  courtName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000',
-    marginBottom: 8,
-  },
-  distance: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#4AAA00',
-    marginBottom: 8,
-  },
-  locationRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6,
-  },
+  courtName: { fontSize: 16, fontWeight: '600', color: '#000', marginBottom: 8 },
+  distance: { fontSize: 16, fontWeight: '600', color: '#4AAA00', marginBottom: 8 },
+  locationRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
   locationIcon: {
     width: 18,
     height: 22,
     marginRight: 6,
     tintColor: '#4b5563',
   },
-  address: {
-    flexShrink: 1,
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#1F3EAF',
-  },
-  selectedCourtRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  selectedCourtText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#000000',
-  },
-  dateGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 24,
-  },
+  address: { flexShrink: 1, fontSize: 14, fontWeight: '600', color: '#1F3EAF' },
+  selectedCourtRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
+  selectedCourtText: { fontSize: 16, fontWeight: '500', color: '#000000' },
+  dateGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 24 },
   dateBox: {
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 16,
     marginRight: 12,
     marginBottom: 12,
-    width: 120
+    width: 120,
   },
   timeBox: {
     borderRadius: 8,
@@ -348,20 +430,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginRight: 12,
     marginBottom: 12,
-    width: 80
+    width: 80,
   },
-  dateText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#000',
-  },
-  backButton: {
-    marginTop: 20,
-  },
-  backText: {
-    color: '#000',
-    fontSize: 16,
-  },
+  dateText: { fontSize: 14, fontWeight: '500', color: '#000' },
+  backButton: { marginTop: 20 },
+  backText: { color: '#000', fontSize: 16 },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)',
@@ -375,30 +448,15 @@ const styles = StyleSheet.create({
     width: '80%',
     alignItems: 'center',
   },
-  modalTitle: {
-    fontWeight: '600',
-    marginBottom: 10,
-    fontSize: 20,
-    color: '#003B89'
-  },
-  modalItem: {
-    fontSize: 16,
-    marginVertical: 8,
-    textAlign: 'center',
-
-  },
-  modalButtonRow: {
-    flexDirection: 'row',
-    marginTop: 20,
-    gap: 16,
-  },
+  modalTitle: { fontWeight: '600', marginBottom: 10, fontSize: 20, color: '#003B89' },
+  modalItem: { fontSize: 16, marginVertical: 8, textAlign: 'center' },
+  modalButtonRow: { flexDirection: 'row', marginTop: 20, gap: 16 },
   cancelBtn: {
     backgroundColor: '#0267B9',
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
     width: 115,
-    height: 42,
   },
   confirmBtn: {
     backgroundColor: '#0267B9',
@@ -406,11 +464,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 8,
     width: 115,
-    height: 42,
   },
-  buttonText: {
-    color: 'white',
-    textAlign: 'center', fontSize: 16,
-    fontWeight: '600',
-  }
+  buttonText: { color: 'white', textAlign: 'center', fontSize: 16, fontWeight: '600' },
 });

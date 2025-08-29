@@ -15,6 +15,7 @@ import ScoreSelector from './ScoreSelector';
 import { ROLE_TYPES, RoleType } from '@/app/(tabs)/constants';
 import { Session } from '@/types/Session';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from 'expo-router';
 
 interface PlayerEvaluationModalProps {
   visible: boolean;
@@ -37,6 +38,7 @@ export default function PlayerEvaluationModal({
   const [fitnessHeadScore, setFitnessHeadScore] = useState(5);
   const [fitnessHeartScore, setFitnessHeartScore] = useState(5);
   const [fitnessAthletScore, setFitnessAthletScore] = useState(5);
+  const [comment, setComment] = useState('');
 
   const [roleType, setRoleType] = useState<RoleType>(session?.role);
 
@@ -61,18 +63,27 @@ export default function PlayerEvaluationModal({
 
   const handleSave = () => {
     if (player) {
-      onSave({
+      const updatedPlayer: any = {
         ...player,
-        tennisHeadScore,
-        tennisHeartScore,
-        tennisAthletScore,
-        fitnessHeadScore,
-        fitnessHeartScore,
-        fitnessAthletScore,
-      });
+        comment,
+      };
+      if (roleType === ROLE_TYPES.TENNIS || roleType === ROLE_TYPES.TENNISFITNESS) {
+        updatedPlayer.tennisHeadScore = tennisHeadScore;
+        updatedPlayer.tennisHeartScore = tennisHeartScore;
+        updatedPlayer.tennisAthletScore = tennisAthletScore;
+      }
+
+      if (roleType === ROLE_TYPES.FITNESS || roleType === ROLE_TYPES.TENNISFITNESS) {
+        updatedPlayer.fitnessHeadScore = fitnessHeadScore;
+        updatedPlayer.fitnessHeartScore = fitnessHeartScore;
+        updatedPlayer.fitnessAthletScore = fitnessAthletScore;
+      }
+
+      onSave(updatedPlayer);
       onClose();
-    }
-  };
+    };
+  }
+
 
   const handleClose = () => {
     onClose();
@@ -154,6 +165,8 @@ export default function PlayerEvaluationModal({
               multiline
               numberOfLines={4}
               placeholder="Your feedback here..."
+              value={comment}
+              onChangeText={setComment}
             />
 
             <View style={styles.actionButtons}>

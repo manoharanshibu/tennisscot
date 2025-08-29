@@ -103,15 +103,15 @@ export default function Index() {
     const [password, setPassword] = useState('');
 
     const userNames = [
-      { name: 'Raffael', role: ROLE_TYPES.TENNIS },
-      { name: 'Roger', role: ROLE_TYPES.FITNESS },
-      { name: 'Andre', role: ROLE_TYPES.TENNISFITNESS },
+      { name: 'raffael', role: ROLE_TYPES.TENNIS },
+      { name: 'roger', role: ROLE_TYPES.FITNESS },
+      { name: 'andre', role: ROLE_TYPES.TENNISFITNESS },
     ];
 
     const NOT_FOUND = 'Role not found';
 
     const getRoleByName = (name: string) => {
-      const user = userNames.find((u) => u.name === name);
+      const user = userNames.find((u) => u.name === name.toLowerCase());
       return user?.role ?? NOT_FOUND;
     };
 
@@ -226,7 +226,7 @@ export default function Index() {
             </View>
           </View>
         </ScrollView>
-        <Text style={styles.version}>Version 6</Text>
+        {/* <Text style={styles.version}>Version 7</Text> */}
       </SafeAreaView>
     );
   }
