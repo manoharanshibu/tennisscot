@@ -19,7 +19,7 @@ const SessionContext = createContext<SessionContextValue | undefined>(undefined)
 export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [session, setSession] = useState<Session>({ loggedIn: false });
   const [appState, setAppState] = useState(AppState.currentState);
-  const idleTime = .1;
+  const idleTime = 5;
 
   useEffect(() => {
     const handleAppStateChange = async (nextAppState: string) => {

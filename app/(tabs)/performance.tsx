@@ -60,6 +60,8 @@ export default function PerformanceScreen() {
       'Tn_Heart': player.tennisHeartScore,
     };
 
+    console.log('saving', JSON.stringify(evaluationData, null, 2))
+
     try {
       const success = await submitPlayerEvaluation(evaluationData);
       if (success) {
@@ -296,7 +298,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 24,
     borderRadius: 12,
-    width: '70%',
+    width: '80%',
     alignItems: 'center',
   },
   modalTitle: {

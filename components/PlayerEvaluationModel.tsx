@@ -109,7 +109,7 @@ export default function PlayerEvaluationModal({
           <View style={styles.playerSection}>
             <View style={styles.playerInfo}>
               <Image source={{ uri: player.profileImage }} style={styles.profileImage} />
-              <View style={styles.nameRankContainer}>
+              <View style={styles.nameContainer}>
                 <Text style={styles.playerName}>{player.name}</Text>
                 <Text style={styles.locationText}>{player.location}</Text>
               </View>
@@ -132,9 +132,7 @@ export default function PlayerEvaluationModal({
             </View>
 
             <View style={styles.scoreSection}>
-              <View style={styles.scoreLabelContainer}>
-                <Text style={styles.scoreLabel}>Head</Text>
-              </View>
+              <Text style={styles.scoreLabel}>Head</Text>
               {(roleType === ROLE_TYPES.TENNIS || roleType === ROLE_TYPES.TENNISFITNESS) && <ScoreSelector value={tennisHeadScore} onChange={setTennisHeadScore} />}
 
               {(roleType === ROLE_TYPES.FITNESS || roleType === ROLE_TYPES.TENNISFITNESS) && <ScoreSelector value={fitnessHeadScore} onChange={setFitnessHeadScore} />}
@@ -142,9 +140,7 @@ export default function PlayerEvaluationModal({
             </View>
 
             <View style={styles.scoreSection}>
-              <View style={styles.scoreLabelContainer}>
-                <Text style={styles.scoreLabel}>Heart</Text>
-              </View>
+              <Text style={styles.scoreLabel}>Heart</Text>
               {(roleType === ROLE_TYPES.TENNIS || roleType === ROLE_TYPES.TENNISFITNESS) && <ScoreSelector value={tennisHeartScore} onChange={setTennisHeartScore} />}
 
               {(roleType === ROLE_TYPES.FITNESS || roleType === ROLE_TYPES.TENNISFITNESS) && <ScoreSelector value={fitnessHeartScore} onChange={setFitnessHeartScore} />}
@@ -152,9 +148,7 @@ export default function PlayerEvaluationModal({
             </View>
 
             <View style={styles.scoreSection}>
-              <View style={styles.scoreLabelContainer}>
-                <Text style={styles.scoreLabel}>Athlet</Text>
-              </View>
+              <Text style={styles.scoreLabel}>Athlet</Text>
               {(roleType === ROLE_TYPES.TENNIS || roleType === ROLE_TYPES.TENNISFITNESS) && <ScoreSelector value={tennisAthletScore} onChange={setTennisAthletScore} />}
 
               {(roleType === ROLE_TYPES.FITNESS || roleType === ROLE_TYPES.TENNISFITNESS) && <ScoreSelector value={fitnessAthletScore} onChange={setFitnessAthletScore} />}
@@ -195,11 +189,6 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     borderBottomColor: '#e5e7eb',
   },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#111827',
-  },
   closeButton: {
     padding: 4,
   },
@@ -208,14 +197,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   playerSection: {
-    alignContent: 'center',
+    alignItems: 'center',
     borderRadius: 16,
-    marginTop: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    marginTop: 15,
+    // shadowColor: '#000',
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.1,
+    // shadowRadius: 8,
+    // elevation: 4,
+    paddingHorizontal: 10, // Ensures space on smaller devices
   },
   profileImage: {
     width: 80,
@@ -227,18 +217,18 @@ const styles = StyleSheet.create({
   countryImage: {
     width: 30,
     height: 30,
-    marginTop: -15,
   },
   playerInfo: {
     display: 'flex',
     flexDirection: 'row',
-    gap: 30,
+    gap: 20,
     alignItems: 'center',
+    flexWrap: 'wrap', // Ensures elements wrap for small screens
   },
-  nameRankContainer: {
+  nameContainer: {
     flexDirection: 'column',
     alignItems: 'center',
-    alignSelf: 'flex-start',
+    alignSelf: 'flex-end',
 
   },
   playerName: {
@@ -248,121 +238,55 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginTop: 12,
   },
-  rankingBadge: {
-    backgroundColor: '#1e40af',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  rankingText: {
-    color: '#ffffff',
-    fontSize: 12,
-    fontWeight: '600',
-  },
   locationText: {
     fontSize: 10,
     color: '#ffffff',
     fontWeight: '400',
-
     marginBottom: 12,
-  },
-  membershipBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-  },
-  membershipText: {
-    color: '#ffffff',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  statsSection: {
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
-    padding: 20,
-    marginTop: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  headingContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    gap: 10,
-  },
-  heading: {
-    color: '#FD5DF1',
-    fontSize: 21,
-    fontWeight: '600',
-    width: 90,
-  },
-  sectionTitle: {
-    fontSize: 12,
-    fontWeight: '400',
-    color: '#ffffff',
-    marginBottom: 12,
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  statCard: {
-    flex: 1,
-    alignItems: 'center',
-    backgroundColor: '#f9fafb',
-    borderRadius: 12,
-    padding: 16,
-  },
-  statValue: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#111827',
-    marginTop: 8,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: '#6b7280',
-    marginTop: 4,
   },
   evaluationSection: {
     backgroundColor: '#0061a8',
     borderRadius: 16,
-    padding: 40,
+    padding: 20, // Reduced padding for small screens
     marginTop: 16,
-    marginBottom: 20,
-    shadowOffset: { width: 0, height: 2 },
+    marginBottom: 15,
+    /* shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 4,
-    boxShadow: '1px 1px 15px 0px #00000040',
-
+    elevation: 4, */
   },
   scoreSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 6,
     marginBottom: 24,
-  },
-  scoreLabelContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-    width: 85,
+    flexWrap: 'wrap', // Allow items to wrap on smaller screens
   },
   scoreLabel: {
     fontSize: 16,
     fontWeight: '600',
     color: '#ffffff',
     marginLeft: 8,
+    marginBottom: 8,
+    width: 65,
   },
-  scoreDescription: {
-    fontSize: 14,
-    color: '#6b7280',
-    marginBottom: 16,
-    lineHeight: 20,
+  headingContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 6,
+    flexWrap: 'wrap', // Ensures headings are responsive
+  },
+  heading: {
+    color: '#FD5DF1',
+    fontSize: 21,
+    fontWeight: '600',
+    width: 85,
+  },
+  sectionTitle: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: '#ffffff',
+    marginBottom: 12,
   },
   actionButtons: {
     display: 'flex',
@@ -371,11 +295,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 20,
     gap: 12,
-
   },
   textArea: {
     height: 120,
-    width: 300,
+    width: '100%',
     backgroundColor: '#ffffff',
     borderColor: '#ccc',
     borderWidth: 1,
@@ -384,19 +307,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     fontSize: 16,
   },
-  cancelButton: {
-    flex: 1,
-    paddingVertical: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    alignItems: 'center',
-  },
-  cancelButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#374151',
-  },
   saveButton: {
     paddingVertical: 10,
     borderRadius: 12,
@@ -404,12 +314,43 @@ const styles = StyleSheet.create({
     height: 40,
     backgroundColor: '#FD5DF1',
     alignItems: 'center',
-    maxWidth: 80,
-
   },
   saveButtonText: {
     fontSize: 16,
     fontWeight: '600',
     color: '#000000',
+  },
+  closeButton: {
+    padding: 4,
+  },
+
+  // Add Media Query for Small Screens
+  '@media (max-width: 400px)': {
+    container: {
+      padding: 10,
+    },
+    profileImage: {
+      width: 60,
+      height: 60,
+    },
+    heading: {
+      fontSize: 18,
+      width: 70,
+    },
+    saveButton: {
+      width: '100%',
+    },
+    textArea: {
+      height: 100,
+    },
+    playerName: {
+      fontSize: 18,
+    },
+    locationText: {
+      fontSize: 8,
+    },
+    scoreLabel: {
+      fontSize: 14,
+    },
   },
 });

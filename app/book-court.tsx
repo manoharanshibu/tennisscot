@@ -379,9 +379,11 @@ const styles = StyleSheet.create({
   logo: { marginTop: 20, left: 20, width: 180, height: 60, zIndex: 10 },
   container: {
     padding: 16,
-    margin: 20,
+    marginTop: 20,
+    marginLeft: 10,
+    marginRight: 10,
     backgroundColor: '#ffffff',
-    paddingBottom: 50,
+    paddingBottom: 40,
     alignItems: 'center',
     borderRadius: 16,
   },

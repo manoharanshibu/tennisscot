@@ -7,13 +7,9 @@ export default function RootLayout() {
   useFrameworkReady();
 
   return (
-    <>
-      <SessionProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="auto" />
-      </SessionProvider>
-    </>
+    <SessionProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+      <StatusBar style="auto" />
+    </SessionProvider>
   );
 }
