@@ -32,9 +32,9 @@ export default function Index() {
         try {
           const data = await AsyncStorage.getItem('session');
           if (data) {
-            const { username, loggedIn, role } = JSON.parse(data);
-            console.log('>>> Session on home page:', { username, loggedIn, role });
-            setSession({ username, loggedIn, role });
+            const { username, fullName, email, loggedIn, role } = JSON.parse(data);
+            console.log('>>> Session on home page:', { username, fullName, email, loggedIn, role });
+            setSession({ username, fullName, email, loggedIn, role });
           } else {
             setSession(null);
           }
@@ -46,6 +46,7 @@ export default function Index() {
       loadSession();
     }, [])
   );
+
 
   function LandingScreen() {
     return (
@@ -103,9 +104,14 @@ export default function Index() {
     const [password, setPassword] = useState('');
 
     const userNames = [
-      { name: 'raffael', role: ROLE_TYPES.TENNIS },
-      { name: 'roger', role: ROLE_TYPES.FITNESS },
-      { name: 'andre', role: ROLE_TYPES.TENNISFITNESS },
+      { name: 'raffael', role: ROLE_TYPES.TENNIS, fullName: 'Rafael Nadal', email: 'shibum123@gmail.com' },
+      { name: 'roger', role: ROLE_TYPES.FITNESS, fullName: 'Roger Federer', email: 'shibum123@gmail.com' },
+      { name: 'andre', role: ROLE_TYPES.TENNISFITNESS, fullName: 'Andre Agassi', email: 'shibum123@gmail.com' },
+      { name: 'shibu', role: ROLE_TYPES.TENNISFITNESS, fullName: 'Shibu Manoharan', email: 'shibum123@gmail.com' },
+      { name: 'gouthami', role: ROLE_TYPES.TENNISFITNESS, fullName: 'Dubasi Gouthami', email: 'gouthami@greenrichit.com' },
+      { name: 'sesh', role: ROLE_TYPES.TENNISFITNESS, fullName: 'Kumar Sesh', email: 'kumarsesh@greenrichit.com' },
+      { name: 'palani', role: ROLE_TYPES.TENNISFITNESS, fullName: 'Palanivel Subrahmanian', email: 'baskar.ibiz@gmail.com' },
+      { name: 'bhagya', role: ROLE_TYPES.TENNISFITNESS, fullName: 'Bhagya Shyn', email: 'bhagya.shyn@gmail.com' },
     ];
 
     const NOT_FOUND = 'Role not found';
@@ -115,30 +121,37 @@ export default function Index() {
       return user?.role ?? NOT_FOUND;
     };
 
+
     const handleLogin = async () => {
       if (!username.trim() || !password.trim()) {
         Alert.alert('Error', 'Please enter both username and password');
         return;
       }
 
-      const role = getRoleByName(username);
-      if (role === NOT_FOUND) {
+      const user = userNames.find((u) => u.name === username.toLowerCase());
+      if (!user) {
         Alert.alert('Error', 'Invalid username or password');
         return;
       }
 
       try {
-        const sessionData = { username, role, loggedIn: true };
+        const sessionData = {
+          username,
+          fullName: user.fullName,
+          email: user.email,
+          role: user.role,
+          loggedIn: true,
+        };
 
         await AsyncStorage.setItem('session', JSON.stringify(sessionData));
-
-        console.log('Logging in');
+        console.log('Logging in', sessionData);
         setSession(sessionData);
       } catch (error) {
         console.error('Error saving session', error);
         Alert.alert('Error', 'Unable to save session data');
       }
     };
+
 
     const handleSignup = () => {
       Alert.alert('Sign Up', 'Sign up functionality will be available soon!');

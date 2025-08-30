@@ -7,6 +7,8 @@ interface Session {
   username?: string;
   role?: string;
   loggedIn: boolean;
+  email?: string;
+  fullName?: string;
 }
 
 interface SessionContextValue {

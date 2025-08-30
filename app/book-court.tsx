@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,9 @@ import {
   Modal,
 } from 'react-native';
 
+import { useSession } from '@/components/SessionContext';
+
+// Static booking data
 const bookingData = [
   {
     id: '1',
@@ -171,21 +174,12 @@ const bookingData = [
 
 
 export default function BookCourtScreen() {
+  const { session } = useSession(); // <-- use context
   const [selectedCourt, setSelectedCourt] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showBookingDone, setShowBookingDone] = useState(false);
-
-  const renderLocationInfo = () => (
-    <View style={styles.selectedCourtRow}>
-      <Image
-        source={require('../assets/images/locationIcon.png')}
-        style={styles.locationIcon}
-      />
-      <Text style={styles.selectedCourtText}>{selectedCourt?.name}</Text>
-    </View>
-  );
 
   const getStepTitle = () => {
     if (!selectedCourt) return 'Select the Court';
@@ -198,7 +192,34 @@ export default function BookCourtScreen() {
     setShowConfirmation(true);
   };
 
-  const confirmBooking = () => {
+  const confirmBooking = async () => {
+    if (!session) return;
+
+    const bookingPayload = {
+      name: session.fullName,
+      court: selectedCourt?.name,
+      booker_email: session.email,
+      court_admin_email: 'baskar.ibiz@gmail.com',
+      booked_date: selectedDate?.label,
+      booked_time: selectedTime?.label,
+    };
+
+    try {
+      const res = await fetch(
+        'https://5pqjom8xcb.execute-api.eu-west-2.amazonaws.com/default/bookCourt',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bookingPayload),
+        }
+      );
+
+      if (res.ok) console.log('Booking submitted successfully', bookingPayload);
+      else console.error('Booking failed', await res.text());
+    } catch (err) {
+      console.error('API call failed', err);
+    }
+
     setShowConfirmation(false);
     setShowBookingDone(true);
   };
@@ -210,19 +231,15 @@ export default function BookCourtScreen() {
     setShowBookingDone(false);
   };
 
-  const renderSuperscriptLabel = (label) => {
-    const match = label.match(/^(\d+)([a-z]{2})(.*)$/i);
-    if (!match) return <Text style={styles.dateText}>{label}</Text>;
-
-    const [, number, suffix, rest] = match;
-    return (
-      <View style={styles.dateTextRow}>
-        <Text style={styles.dateText}>{number}</Text>
-        <Text style={[styles.dateText, styles.superscript]}>{suffix}</Text>
-        <Text style={styles.dateText}>{rest}</Text>
-      </View>
-    );
-  };
+  const renderLocationInfo = () => (
+    <View style={styles.selectedCourtRow}>
+      <Image
+        source={require('../assets/images/locationIcon.png')}
+        style={styles.locationIcon}
+      />
+      <Text style={styles.selectedCourtText}>{selectedCourt?.name}</Text>
+    </View>
+  );
 
   return (
     <SafeAreaView style={{ backgroundColor: '#0061a8', flex: 1 }}>
@@ -231,10 +248,8 @@ export default function BookCourtScreen() {
         style={styles.logo}
         resizeMode="contain"
       />
-
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>{getStepTitle()}</Text>
-
         {selectedCourt && renderLocationInfo()}
 
         {/* Court Selection */}
@@ -272,10 +287,7 @@ export default function BookCourtScreen() {
                   style={[styles.dateBox, { backgroundColor }]}
                   onPress={() => setSelectedDate(date)}
                 >
-                  <View style={styles.dateTextRow}>
-                    <Text style={styles.dateText}>{date.day} </Text>
-                    {renderSuperscriptLabel(date.label)}
-                  </View>
+                  <Text style={styles.dateText}>{date.day} {date.label}</Text>
                 </TouchableOpacity>
               );
             })}
@@ -290,9 +302,7 @@ export default function BookCourtScreen() {
                 key={i}
                 style={[
                   styles.timeBox,
-                  {
-                    backgroundColor: slot.available ? '#60FB4BBA' : '#8E85853B',
-                  },
+                  { backgroundColor: slot.available ? '#60FB4BBA' : '#8E85853B' },
                 ]}
                 disabled={!slot.available}
                 onPress={() => handleTimeSelect(slot)}
@@ -324,7 +334,7 @@ export default function BookCourtScreen() {
         </TouchableOpacity>
       </ScrollView>
 
-      {/* Booking Confirmation Modal */}
+      {/* Confirmation Modal */}
       <Modal transparent visible={showConfirmation} animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
