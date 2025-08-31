@@ -53,7 +53,7 @@ export default function Index() {
       <SafeAreaView style={styles.container}>
         {/* Background image at the bottom */}
         <Image
-          source={require('../../assets/images/bg.png')}
+          source={require('../../assets/images/bg_playing.gif')}
           style={styles.bottomImage}
           resizeMode="cover"
         />
