@@ -12,6 +12,7 @@ import {
   ScrollView,
   Dimensions,
 } from 'react-native';
+import { Video } from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { LogIn, UserPlus, Lock, User } from 'lucide-react-native';
@@ -53,7 +54,7 @@ export default function Index() {
       <SafeAreaView style={styles.container}>
         {/* Background image at the bottom */}
         <Image
-          source={require('../../assets/images/bg_playing.gif')}
+          source={require('../../assets/images/bg.png')}
           style={styles.bottomImage}
           resizeMode="cover"
         />
@@ -174,10 +175,18 @@ export default function Index() {
           </View>
 
           <View style={styles.loginContainer}>
-            <Image
-              source={require('../../assets/images/tennis-player.png')}
+            {/* <Image
+              source={require('../../assets/images/bg_playing.gif')}
               style={styles.tennisPlayer}
               resizeMode="cover"
+            /> */}
+            <Video
+              source={require('../../assets/images/tennis_player.mp4')}
+              style={styles.tennisPlayer}
+              resizeMode="cover"
+              shouldPlay
+              isLooping
+              isMuted
             />
 
             <View style={styles.formContainer}>
@@ -446,7 +455,7 @@ const styles = StyleSheet.create({
   textTitle: {
     color: '#FFFFFF',
     boxShadow: '3px 3px 6px var(--sds- size - stroke - focus - ring) #000000',
-    fontSize: 24,
+    fontSize: 22,
   },
   bottomImage: {
     position: 'absolute',
