@@ -11,6 +11,7 @@ import {
   Alert,
   ScrollView,
   Dimensions,
+  Platform,
 } from 'react-native';
 import { Video } from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -175,19 +176,22 @@ export default function Index() {
           </View>
 
           <View style={styles.loginContainer}>
-            {/* <Image
-              source={require('../../assets/images/bg_playing.gif')}
-              style={styles.tennisPlayer}
-              resizeMode="cover"
-            /> */}
-            <Video
-              source={require('../../assets/images/tennis_player.mp4')}
-              style={styles.tennisPlayer}
-              resizeMode="cover"
-              shouldPlay
-              isLooping
-              isMuted
-            />
+            {Platform.OS === "web" ? (
+              <Image
+                source={require("../../assets/images/bg_playing.gif")}
+                style={styles.tennisPlayer}
+                resizeMode="cover"
+              />
+            ) : (
+              <Video
+                source={require("../../assets/images/tennis_player.mp4")}
+                style={styles.tennisPlayer}
+                resizeMode="cover"
+                shouldPlay
+                isLooping
+                isMuted
+              />
+            )}
 
             <View style={styles.formContainer}>
               <View style={styles.inputContainer}>
@@ -327,6 +331,8 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#0061a8',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   scrollContainer: {
     paddingBottom: 32,
@@ -334,7 +340,8 @@ const styles = StyleSheet.create({
   bannerContainer: {
     position: 'relative',
     width: '100%',
-    height: 240,
+    height: Platform.OS === "web" ? 180 : "240",
+    maxHeight: Platform.OS === "web" ? 180 : undefined,
   },
   loginContainer: {
     position: 'relative',
@@ -460,10 +467,9 @@ const styles = StyleSheet.create({
   bottomImage: {
     position: 'absolute',
     bottom: 0,
-    left: 0,
     width: '100%',
+    maxWidth: 400,
     height: 200, // Adjust height depending on image
-    zIndex: -1,
   },
 
   container: {

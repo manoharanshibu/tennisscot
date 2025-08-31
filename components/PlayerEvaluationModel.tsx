@@ -180,6 +180,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0061a8',
+    width: '100%',
+    maxWidth: 600,
+    alignSelf: 'center',
   },
   header: {
     flexDirection: 'row',

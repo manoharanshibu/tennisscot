@@ -242,7 +242,7 @@ export default function BookCourtScreen() {
   );
 
   return (
-    <SafeAreaView style={{ backgroundColor: '#0061a8', flex: 1 }}>
+    <SafeAreaView style={{ backgroundColor: '#0061a8', flex: 1, maxWidth: 600, alignSelf: 'center' }}>
       <Image
         source={require('../assets/images/tennis-scotland-logo.png')}
         style={styles.logo}
@@ -458,6 +458,7 @@ const styles = StyleSheet.create({
     padding: 24,
     borderRadius: 12,
     width: '80%',
+    maxWidth: 400,
     alignItems: 'center',
   },
   modalTitle: { fontWeight: '600', marginBottom: 10, fontSize: 20, color: '#003B89' },

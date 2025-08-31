@@ -30,11 +30,13 @@ export default function SettingsScreen() {
       </LinearGradient>
 
       <View style={styles.content}>
-        <View style={styles.comingSoonContainer}>
-          <TouchableOpacity onPress={handleLogout} activeOpacity={0.95}>
-            <Text style={styles.logoutText}>Logout</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          style={styles.containerItem}
+          onPress={handleLogout}
+          activeOpacity={0.95}
+        >
+          <Text style={styles.logoutText}>Logout</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -75,12 +77,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
-  comingSoonContainer: {
+  containerItem: {
+    display: 'flex',
     alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#0061A8',
+    boxShadow: '2px 6px 20px 0px #000000',
+    margin: 20,
+    width: 319,
+    height: 72,
+    textAlign: 'center',
   },
   logoutText: {
-    fontSize: 18,
+    display: 'flex',
+    fontFamily: 'Segoe UI',
+    fontSize: 22,
     fontWeight: '600',
-    color: '#1d4ed8',
+    color: '#ffffff',
+    alignItems: 'center',
+    margin: 4,
+    textAlign: 'center',
   },
 });
