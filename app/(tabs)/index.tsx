@@ -344,10 +344,10 @@ const styles = StyleSheet.create({
     maxHeight: Platform.OS === "web" ? 180 : undefined,
   },
   loginContainer: {
-    // position: 'relative',
+    position: 'relative',
     width: '100%',
     height: '100%',
-    justifyContent: 'center',
+    // justifyContent: 'center',
     alignContent: 'center'
   },
   bannerImage: {
